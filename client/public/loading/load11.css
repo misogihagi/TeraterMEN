@@ -1,0 +1,57 @@
+/* https://github.com/loadingio/css-spinner/blob/master/dist/heart.html */
+
+.load {
+  text-indent: -9999em;
+  margin: 88px auto;
+  position: relative;
+  font-size: 11px;
+  transform: translate(50%) rotate(45deg);
+  transform-origin: 40px 40px;
+}
+.load .loader {
+  top: 32px;
+  left: 32px;
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  animation: load 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.load .loader:after,
+.load .loader:before {
+  content: " ";
+  position: absolute;
+  display: block;
+  width: 32px;
+  height: 32px;
+  background: #fff;
+}
+.load .loader:before {
+  left: -24px;
+  border-radius: 50% 0 0 50%;
+}
+.load .loader:after {
+  top: -24px;
+  border-radius: 50% 50% 0 0;
+}
+@keyframes load {
+  0% {
+    transform: scale(0.95);
+  }
+  5% {
+    transform: scale(1.1);
+  }
+  39% {
+    transform: scale(0.85);
+  }
+  45% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(0.9);
+  }
+}
+

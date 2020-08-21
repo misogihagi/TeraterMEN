@@ -1,0 +1,27 @@
+/* https://github.com/loadingio/css-spinner/blob/master/dist/dual-ring.html */
+.load .loader {
+  text-indent: -9999em;
+  margin: 88px auto;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.loader:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: load 1.2s linear infinite;
+}
+@keyframes load {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

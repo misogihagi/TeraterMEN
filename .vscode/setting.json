@@ -1,0 +1,22 @@
+{
+	"eslint.validate": [
+		{
+			"language": "typescript",
+			"autoFix": true
+		},
+		{
+			"language": "html",
+			"autoFix": true
+		}
+	],
+	"files.trimTrailingWhitespace": true,
+	"files.associations": {
+		"*.svelte": "html"
+	},
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/bower_components": true,
+		"**/release": true
+	},
+	"typescript.tsdk": "./node_modules/typescript/lib"
+}

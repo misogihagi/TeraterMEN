@@ -1,0 +1,13 @@
+/node_modules/
+/client/node_modules/
+/client/public/build/
+/client/package-lock.json
+/server/node_modules/
+/server/log/
+/server/dist/
+/server/package-lock.json
+/test/host.key
+/test/host.key.pub
+
+package-lock.json
+.DS_Store
