@@ -1,16 +1,16 @@
+import * as t from 'teratermen'
 import { LibCommon } from './_common.js'
 
 export class Telnet extends LibCommon {
   hosts
-  logger
-  constructor (host:string) {
+  constructor () {
     super()
     this.hosts = []
   }
 
   connect (config) {
     const host = new (require('telnet-client'))()
-    host.logger = new this.logger()
+    host.logger = new this.Logger(config.session)
     host.connect({
       host: config.host,
       port: config.port || 23,

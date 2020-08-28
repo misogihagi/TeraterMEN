@@ -1,9 +1,9 @@
+import * as t from 'teratermen'
 import { LibCommon } from './_common.js'
 
 export class Serial extends LibCommon {
   hosts
-  logger
-  constructor (host:string) {
+  constructor () {
     super()
     this.hosts = []
   }
@@ -16,7 +16,7 @@ export class Serial extends LibCommon {
       baudRate: 9600
     })
     this.hosts.push(host)
-    host.logger = new this.logger()
+    host.logger = new this.Logger(config.session)
     host.on('open', () => {
       config.onconnect()
     })

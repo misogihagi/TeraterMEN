@@ -1,71 +1,112 @@
 <script>
 import '../node_modules/xterm/css/xterm.css';
-import SocketIO from 'socket.io-client';
 import URI from 'urijs';
 
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 
 import { onMount } from 'svelte';
-import key2buf from './key2buf';
+import * as adapter from './ipcrenderadapter';
+// import * as adapter from './socketioadapter';
+import { key2buf } from './key2buf';
+import { str2buf } from './str2buf';
 
 const loadingfilecount = 12;
 
-const cssfile = `/loading/load${Math.floor(Math.random() * loadingfilecount)}.css`;
+const cssfile = `loading/load${Math.floor(Math.random() * loadingfilecount)}.css`;
 const fileref = document.createElement('link');
 fileref.setAttribute('rel', 'stylesheet');
 fileref.setAttribute('type', 'text/css');
 fileref.setAttribute('href', cssfile);
 document.getElementsByTagName('head')[0].appendChild(fileref);
 
-const socket = SocketIO();
-socket.binaryType = 'arraybuffer';
+let hostConfig = URI(document.location.hash.slice(1))._parts;
 const term = new Terminal();
 const fitAddon = new FitAddon();
 term.loadAddon(fitAddon);
 
 const store = localStorage.getItem('store') ? JSON.parse(localStorage.getItem('store')) : {};
 let session = '';
-
-socket.on('connect', () => {
+adapter.once('connect', () => {
 	document.getElementById('overlay').classList.add('overlay-on');
 	Object.keys(store).forEach((key) => {
-		if (store[key] === document.location.search) {
+		if (store[key] === document.location.hash.slice(1)) {
 			session = key;
 		}
 	});
-	if (!session) session = socket.id;
-	socket.emit('join', {
-		id: session,
-		config: URI(document.location.search.replace(/\?q=(.+)/, '$1'))._parts,
-	});
+	if (!session) session = adapter.id;
+	if (hostConfig.hostname) {
+		adapter.emit('join', {
+			id: session,
+			config: hostConfig,
+		});
+	}
 });
-
-socket.on('join', (msg) => {
-	if (msg === 'connect') {
+adapter.once('join', (msg) => {
+	if (msg === 'reconnect') {
 		document.getElementById('overlay').classList.remove('overlay-on');
-		store[session] = document.location.search;
+		store[session] = document.location.hash.slice(1);
 		localStorage.setItem('store', JSON.stringify(store));
-	} else if (msg === 'expired') {
+	} else if (msg === 'connect') {
 		document.getElementById('overlay').classList.remove('overlay-on');
 		delete store[session];
-		session = socket.id;
-		store[socket.id] = document.location.search;
+		session = adapter.id;
+		store[adapter.id] = document.location.hash.slice(1);
 		localStorage.setItem('store', JSON.stringify(store));
 	}
 });
 
-socket.on('relay', (msg) => {
+adapter.on('relay', (msg) => {
 	term.write(new Uint8Array(msg));
 });
+
 term.onKey((e) => {
-	socket.emit('relay', {
+	adapter.emit('relay', {
 		id: session,
 		buf: key2buf(e.domEvent),
 	});
 });
+
 onMount(() => {
+	document.getElementById('hash').addEventListener('change', (e) => {
+		hostConfig = URI(e.target.value)._parts;
+
+		if (hostConfig.hostname) {
+			adapter.emit('join', {
+				id: session,
+				config: hostConfig,
+			});
+			localStorage.setItem('store', JSON.stringify(store));
+			document.location.hash = e.target.value;
+		}
+	});
 	term.open(document.getElementById('terminal'));
+	const doubluerightclickevent = new Event('doubluerightclick');
+	term.singleRightClicked = false;
+	term.element.addEventListener('contextmenu', () => {
+		const timing = 500;
+		if (term.singleRightClicked) {
+			term.element.dispatchEvent(doubluerightclickevent);
+			term.singleRightClicked = false;
+			return;
+		}
+		term.singleRightClicked = true;
+		setTimeout(() => {
+			term.singleRightClicked = false;
+		}, timing);
+	});
+	term.element.addEventListener('doubluerightclick', () => {
+		navigator.clipboard.readText()
+			.then((text) => {
+				adapter.emit('relay', {
+					id: session,
+					buf: str2buf(text),
+				});
+			})
+			.catch((err) => {
+				console.error('Failed to read clipboard contents: ', err);
+			});
+	});
 	fitAddon.fit();
 	((overlay, xscreen) => {
 		overlay.style.height = xscreen.style.height;
@@ -73,6 +114,7 @@ onMount(() => {
 });
 </script>
 <main>
+	<input id="hash">
 	<div id="wrapper">
 		<div id="overlay" class="overlay overlay-on"><div class="load-container"><div class="load"><div class="loader">Loading...</div></div></div></div>
 		<div id="terminal"></div>

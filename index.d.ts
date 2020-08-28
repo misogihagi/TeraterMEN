@@ -1,11 +1,29 @@
-// pathから拝借
+export interface JOINMSG {
+id: string,
+config:{ //URI(document.location.search.replace(/\?q=(.+)/, '$1'))._parts,
+      protocol: string,
+      username: string,
+      password: string,
+      hostname: string,
+      urn: string,
+      port: string,
+      path: string,
+      query: string,
+      fragment: string,
+}
+}
+
+interface ClientRequestStatus {
+session:string
+}
+
+
+
+type LoggerOptionConfig=any
+
 import * as fs from 'fs'
 
-interface ParsedPath {
-    /**
-     * The root of the path such as '/' or 'c:\'
-     */
-    root: string;
+interface unitOption {
     /**
      * The full directory path such as '/home/user/dir' or 'c:\path\dir'
      */
@@ -22,6 +40,12 @@ interface ParsedPath {
      * The file name without extension (if any) such as 'index'
      */
     name: string;
+    /**
+     * The full path such (if any) as '/home/user/dir/index.html' or 'c:\path\dir\index.html'
+     * override the other options (dir,ext,name)
+     */
+    path: string;
+    encording : string;
 }
 
 type LogOption= Log | logOptionTier1
@@ -102,3 +126,5 @@ export interface ConfigOption {
 export interface ConnectOption extends ConfigOption{
   protocol:string
 }
+
+type adaptedBuffer=ArrayBuffer | Buffer

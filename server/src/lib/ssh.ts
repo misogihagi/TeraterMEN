@@ -1,16 +1,18 @@
+import * as t from 'teratermen'
 import { LibCommon } from './_common.js'
+import * as ssh2streams from 'ssh2-streams'
+const ALGORITHMS = ssh2streams.constants.ALGORITHMS
 
 export class Ssh extends LibCommon {
   hosts
-  logger
-  constructor (host:string) {
+  constructor () {
     super()
     this.hosts = []
   }
 
   connect (config) {
     const host = new (require('ssh2').Client)()
-    host.logger = new this.logger()
+    host.logger = new this.Logger(config.session)
     host.on('ready', function () {
       config.onconnect()
       host.shell(function (err, stream) {
@@ -35,38 +37,8 @@ export class Ssh extends LibCommon {
       username: config.username || '',
       password: config.password || '',
       algorithms: {
-        kex: [
-          'curve25519-sha256',
-          'curve25519-sha256@libssh.org',
-          'ecdh-sha2-nistp256',
-          'ecdh-sha2-nistp384',
-          'ecdh-sha2-nistp521',
-          'diffie-hellman-group-exchange-sha1',
-          'diffie-hellman-group-exchange-sha256',
-          'diffie-hellman-group1-sha1',
-          'diffie-hellman-group14-sha1',
-          'diffie-hellman-group14-sha256',
-          'diffie-hellman-group16-sha512',
-          'diffie-hellman-group18-sha512'
-        ],
-        cipher: [
-          'aes128-ctr',
-          'aes192-ctr',
-          'aes256-ctr',
-          'aes128-gcm',
-          'aes128-gcm@openssh.com',
-          'aes256-gcm',
-          'aes256-gcm@openssh.com',
-          'aes256-cbc',
-          'aes192-cbc',
-          'aes128-cbc',
-          'blowfish-cbc',
-          '3des-cbc',
-          'arcfour256',
-          'arcfour128',
-          'cast128-cbc',
-          'arcfour'
-        ]
+        kex: ALGORITHMS.SUPPORTED_KEX,
+        cipher: ALGORITHMS.SUPPORTED_CIPHER
       }
     })
     host.write = buf => {

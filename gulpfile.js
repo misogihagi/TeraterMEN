@@ -53,6 +53,25 @@ gulp.task('build',
         'build:server'
     )
 );
+gulp.task('build:electron',
+    gulp.series(
+      'build',
+      (done)=>{return electronBuilder({
+        config: {
+            'appId': 'teratermen',
+            'asar':false,
+            'win':{
+                'target': {
+                    'target': 'zip',
+                    'arch': [
+                        'x64',
+                        'ia32',
+                    ]
+                }
+            }
+        }
+      })}
+);
 gulp.task('lint',
     gulp.parallel(
         'lint:client',
@@ -65,4 +84,5 @@ gulp.task('start',
       (done)=>{return run('node server/dist/index').exec()}
     )
 );
+
 //gulp.task("default", gulp.task("start"));

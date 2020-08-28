@@ -22,6 +22,7 @@ Enter:{
 6	TRUE	TRUE	FALSE
 7	TRUE	TRUE	TRUE
 */
+import * as t from 'teratermen';
 
 const terrible_table = [
 	{
@@ -39,7 +40,7 @@ const terrible_table = [
 	},
 ];
 
-const key2buf = (dom) => {
+export const key2buf = (dom) => {
 	// refactoring welcome here!
 	const { key } = dom;
 	const bufArr = [];

@@ -1,4 +1,11 @@
 {
+  "compilerOptions": {
+    "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
+    "paths": {
+      "teratermen": ["../index.d.ts"],
+    },
+    "lib": ["ESNEXT","dom"],
+  },
   "extends": "@tsconfig/svelte/tsconfig.json",
 
   "include": ["src/**/*"],

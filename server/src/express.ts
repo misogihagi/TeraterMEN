@@ -1,17 +1,17 @@
-import * as t from './lib/_commonInterface'
+import * as t from 'teratermen'
 const express = require('express')
 const app = express()
 const http = require('http').Server(app)
-const io = require('socket.io')(http)
 const port = process.env.PORT || 3000
 const path = require('path')
 const Serial = require('./lib/serial.js').Serial
 const Ssh = require('./lib/ssh.js').Ssh
 const Telnet = require('./lib/telnet.js').Telnet
-const store = {}
 
+const store = {}
+const io = require('socket.io')(http)
 io.on('connection', function (socket) {
-  socket.on('join', function (msg) {
+  socket.on('join', function (msg:t.JOINMSG) {
     const config = msg.config
     if (msg.id in store) {
       socket.join(msg.id)
@@ -36,7 +36,8 @@ io.on('connection', function (socket) {
         },
         ondata: buf => {
           io.to(msg.id).emit('relay', buf)
-        }
+        },
+        session: msg.id
       })
     })()
   })
@@ -45,7 +46,6 @@ io.on('connection', function (socket) {
     store[msg.id].host.write(msg.buf)
   })
 })
-
 const staticpublic = path.join(__dirname, '..', '..', 'client', 'public')
 app.get('/', function (req, res) {
   res.sendFile(path.join(staticpublic, 'index.html'))

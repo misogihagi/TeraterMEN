@@ -1,3 +1,4 @@
+/dist/
 /node_modules/
 /client/node_modules/
 /client/public/build/
@@ -6,6 +7,7 @@
 /server/log/
 /server/dist/
 /server/package-lock.json
+/server/.nyc_output/
 /test/host.key
 /test/host.key.pub
 

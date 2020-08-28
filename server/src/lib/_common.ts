@@ -1,59 +1,180 @@
 import * as fs from 'fs'
-import * as t from './_commonInterface'
+import * as t from 'teratermen'
 import * as path from 'path'
+import * as config from '../../server.conf.js'
 
-export class LoggerOption {
-  // Loggerで使うものたち
-  ClientBinaryFullpath?
-  ClientBinaryEncording?
-  ClientTextFullpath?
-  ClientTextEncording?
-  HostBinaryFullpath?
-  HostBinaryEncording?
-  HostTextFullpath?
-  HostTextEncording?
-  LogPath
-  LogPrefix
-  constructor (option?) {
-    this.LogPath = path.join(__dirname, '../../log')
-    try {
-      fs.statSync(this.LogPath)
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        fs.mkdirSync(this.LogPath)
-      } else {
-        throw error
+export const DefaultOption = {
+  log: {
+    default: {
+      dir: path(__dirname, '/../../log/'),
+      ext: 'log.txt',
+      name: Date.now().toString(),
+      encording: 'utf-8'
+    },
+    client: {
+      bin: {
+        dir: path(__dirname, '/../../log/'),
+        ext: 'bin.txt',
+        name: Date.now().toString() + '_{session}_client'
+      },
+      txt: {
+        dir: path(__dirname, '/../../log/'),
+        ext: 'txt',
+        name: Date.now().toString() + '_{session}_client'
+      }
+    },
+    host: {
+      bin: {
+        dir: path(__dirname, '/../../log/'),
+        ext: 'bin.txt',
+        name: Date.now().toString() + '_{session}_host'
+      },
+      txt: {
+        dir: path(__dirname, '/../../log/'),
+        ext: 'txt',
+        name: Date.now().toString() + '_{session}_host'
       }
     }
-    this.LogPrefix = Date.now().toString()
-    this.ClientBinaryFullpath = path.join(this.LogPath, this.LogPrefix + 'client.bin')
-    this.ClientBinaryEncording = 'utf-8'
-    this.ClientTextFullpath = path.join(this.LogPath, this.LogPrefix + 'client.txt')
-    this.ClientTextEncording = 'utf-8'
-    this.HostBinaryFullpath = path.join(this.LogPath, this.LogPrefix + 'host.bin')
-    this.HostBinaryEncording = 'utf-8'
-    this.HostTextFullpath = path.join(this.LogPath, this.LogPrefix + 'host.txt')
-    this.HostTextEncording = 'utf-8'
-    // client,hostがnullかどうかをみてnullが入っていない場合
   }
 }
+export class LoggerOption {
+  ClientBinaryFullpath
+  ClientBinaryEncording
+  ClientTextFullpath
+  ClientTextEncording
+  HostBinaryFullpath
+  HostBinaryEncording
+  HostTextFullpath
+  HostTextEncording
+  constructor (option) {
+    if (!option)option = DefaultOption
+    else {
+      if (!option.log)option.log = DefaultOption.log
+    }
 
+    function pathResolver (mode:string) {
+      let fullpath = ''
+      const unit:t.unitOption =
+      mode === 'ClientBinaryFullpath' ? option.log.client.bin
+        : mode === 'ClientTextFullpath' ? option.log.client.txt
+          : mode === 'HostBinaryFullpath' ? option.log.host.bin
+            : mode === 'HostTextFullpath' ? option.log.host.txt
+              : null
+      function deffo (prpty:string) {
+        let default1 = {}
+        let default2 = {}
+        let default3 = {}
+        if (mode === 'ClientBinaryFullpath' || mode === 'ClientTextFullpath') {
+          if (option?.log?.client?.default)default1 = option.log.client.default
+          default3 =
+          mode === 'ClientBinaryFullpath' ? DefaultOption.log.client.bin
+            : mode === 'ClientTextFullpath' ? DefaultOption.log.client.txt
+              : DefaultOption.log.default
+        }
+        if (mode === 'HostBinaryFullpath' || mode === 'HostTextFullpath') {
+          if (option?.log?.host?.default)default1 = option.log.host.default
+          default3 =
+          mode === 'HostBinaryFullpath' ? DefaultOption.log.host.bin
+            : mode === 'HostTextFullpath' ? DefaultOption.log.host.txt
+              : DefaultOption.log.default
+        }
+        if (option?.log?.default)default2 = option.log.default
+        return default1[prpty] || default2[prpty] || default3[prpty]
+      }
+
+      if (unit.path) fullpath = unit.path
+      else if (unit.dir || deffo('dir')) {
+        const dir = unit.dir || deffo('dir')
+        if (unit.ext && unit.name) {
+          fullpath = path.join(dir, unit.name + '.' + unit.ext)
+        } else if (unit.base) {
+          fullpath = path.join(dir, unit.base)
+        } else {
+          if (unit.name) {
+            fullpath = path.join(dir, unit.name + '.' + deffo('ext'))
+          } else if (unit.ext) {
+            fullpath = path.join(dir, deffo('name') + '.' + unit.ext)
+          } else {
+            fullpath = path.join(dir, deffo('name') + '.' + deffo('ext'))
+          }
+        }
+      }
+
+      try {
+        fs.statSync(path.dirname(fullpath))
+      } catch (error) {
+        if (error.code === 'ENOENT') {
+          fs.mkdirSync(path.dirname(fullpath))
+        } else {
+          throw error
+        }
+      }
+      return fullpath
+    }
+    function encordingResolver (mode:string) {
+      function deffo (prpty:string) {
+        let default1 = {}
+        let default2 = {}
+        let default3 = {}
+        if (mode === 'ClientBinaryFullpath' || mode === 'ClientTextFullpath') {
+          if (option?.log?.client?.default)default1 = option.log.client.default
+          default3 =
+        mode === 'ClientBinaryFullpath' ? DefaultOption.log.client.bin
+          : mode === 'ClientTextFullpath' ? DefaultOption.log.client.txt
+            : DefaultOption.log.default
+        }
+        if (mode === 'HostBinaryFullpath' || mode === 'HostTextFullpath') {
+          if (option?.log?.host?.default)default1 = option.log.host.default
+          default3 =
+        mode === 'HostBinaryFullpath' ? DefaultOption.log.host.bin
+          : mode === 'HostTextFullpath' ? DefaultOption.log.host.txt
+            : DefaultOption.log.default
+        }
+        if (option?.log?.default)default2 = option.log.default
+        return default1[prpty] || default2[prpty] || default3[prpty]
+      }
+      let encording = ''
+      const unit =
+    mode === 'ClientBinaryFullpath' ? option.log.client.bin
+      : mode === 'ClientTextFullpath' ? option.log.client.txt
+        : mode === 'HostBinaryFullpath' ? option.log.host.bin
+          : mode === 'HostTextFullpath' ? option.log.host.txt
+            : null
+      if (unit.encording) encording = unit.encording
+      else {
+        encording = deffo('encording')
+      }
+      return encording
+    }
+    this.ClientBinaryFullpath = pathResolver('ClientBinaryFullpath')
+    this.ClientBinaryEncording = encordingResolver('ClientBinaryFullpath')
+    this.ClientTextFullpath = pathResolver('ClientTextFullpath')
+    this.ClientTextEncording = encordingResolver('ClientTextFullpath')
+    this.HostBinaryFullpath = pathResolver('HostBinaryFullpath')
+    this.HostBinaryEncording = encordingResolver('HostBinaryFullpath')
+    this.HostTextFullpath = pathResolver('HostTextFullpath')
+    this.HostTextEncording = encordingResolver('HostTextFullpath')
+  }
+}
 export class Logger {
   client:t.Log
   host:t.Log
-  loggerOption:any
-  constructor (option?) {
-    this.loggerOption = new LoggerOption()
+  loggerOption:LoggerOption
+  constructor (session) {
+    function pathReplacer (path:string) {
+      return path.replace(/{session}/g, session)
+    }
+    this.loggerOption = new LoggerOption(config)
     this.client = {
       bin: this.loggerOption.ClientBinaryFullpath === null
         ? null : fs.createWriteStream(
-          this.loggerOption.ClientBinaryFullpath,
+          pathReplacer(this.loggerOption.ClientBinaryFullpath),
           this.loggerOption.ClientBinaryEncording
         ),
       txt:
         this.loggerOption.ClientTextFullpath === null
           ? null : fs.createWriteStream(
-            this.loggerOption.ClientTextFullpath,
+            pathReplacer(this.loggerOption.ClientTextFullpath),
             this.loggerOption.ClientTextEncording
           )
     }
@@ -62,12 +183,12 @@ export class Logger {
       bin:
             this.loggerOption.HostBinaryFullpath === null
               ? null : fs.createWriteStream(
-                this.loggerOption.HostBinaryFullpath,
+                pathReplacer(this.loggerOption.HostBinaryFullpath),
                 this.loggerOption.HostBinaryEncording
               ),
       txt: this.loggerOption.HostBinaryEncording === null
         ? null : fs.createWriteStream(
-          this.loggerOption.HostTextFullpath,
+          pathReplacer(this.loggerOption.HostTextFullpath),
           this.loggerOption.HostTextEncording
         )
     }
@@ -99,8 +220,8 @@ export class Logger {
 
 export class LibCommon {
   constructor () {
-    this.logger = Logger
+    this.Logger = Logger
   }
 
-  logger
+  Logger
 }
