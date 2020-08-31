@@ -13,6 +13,7 @@ node server/dist/express
 で
 http://localhost:3000/?q=ssh://user:pass@localhost:22
 にアクセスすれば自分のsshサーバーにアクセスするはず。
+.envをelectronにしたりgulpにelectronと渡せばelectronで起動(してくれ)
 
 # ライセンス
 MITかなあ?

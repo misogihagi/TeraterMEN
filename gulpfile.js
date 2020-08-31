@@ -5,7 +5,32 @@ const run = require('gulp-run');
 const ts = require("gulp-typescript");
 const clientTsProject = ts.createProject('./client/tsconfig.json');
 const serverTsProject = ts.createProject('./server/tsconfig.json');
-const eslint = require('gulp-eslint')
+const eslint = require('gulp-eslint');
+
+require('dotenv').config()
+Array.from(['env','platform']).forEach((v,i) => {
+    process.env[i]=process.env[v]
+});
+const [env,platform]=process.argv.slice(3).reduce(
+    (acc, cur) => {
+        if(['--prod','prod','production'].includes(cur)){
+            acc[0]='production'
+            return acc
+        }else if(['--dev','dev','development'].includes(cur)){
+            acc[0]='development'
+            return acc
+        }else if(['--elctr','electron','electron'].includes(cur)){
+            acc[1]='electron'
+            return acc
+        }else if(['--expr','express','express'].includes(cur)){
+            acc[1]='express'
+            return acc
+        }
+    },new Array(2).fill(null)
+).map((v,i)=>{
+    process.env[i]=v || process.env[i] || ['development','express'][i]
+    return process.env[i]
+})
 
 gulp.task("build:client", function() {
   return clientTsProject.src()
@@ -71,6 +96,7 @@ gulp.task('build:electron',
             }
         }
       })}
+    )
 );
 gulp.task('lint',
     gulp.parallel(

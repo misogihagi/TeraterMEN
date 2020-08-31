@@ -15,10 +15,10 @@ io.on('connection', function (socket) {
     const config = msg.config
     if (msg.id in store) {
       socket.join(msg.id)
-      io.to(msg.id).emit('join', 'connect')
+      io.to(msg.id).emit('join', 'reconnect')
       console.log('reconnect' + msg.id)
       return
-    } else { io.to(msg.id).emit('join', 'expired') }
+    } else { io.to(msg.id).emit('join', 'connect') }
     store[msg.id] = config
     socket.join(msg.id)
     store[msg.id].host = (() => {
@@ -32,7 +32,7 @@ io.on('connection', function (socket) {
         password: config.password,
         port: config.port,
         onconnect: () => {
-          io.to(msg.id).emit('join', 'connect')
+          io.to(msg.id).emit('join', 'reconnect')
         },
         ondata: buf => {
           io.to(msg.id).emit('relay', buf)
@@ -42,7 +42,7 @@ io.on('connection', function (socket) {
     })()
   })
   socket.on('relay', function (msg) {
-    if (!store[msg.id].host)io.to(msg.id).emit('join', 'expired')
+    if (!store[msg.id].host)io.to(msg.id).emit('join', 'connect')
     store[msg.id].host.write(msg.buf)
   })
 })

@@ -6,8 +6,14 @@ import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 
 import { onMount } from 'svelte';
-import * as adapter from './ipcrenderadapter';
-// import * as adapter from './socketioadapter';
+let moduleadapter
+if(process.env.platform === 'express'){
+	moduleadapter='./socketioadapter'
+}else if(process.env.platform === './socketioadapter' ){
+	moduleadapter='./ipcrenderadapter'
+}
+
+import * as adapter from moduleadapter
 import { key2buf } from './key2buf';
 import { str2buf } from './str2buf';
 

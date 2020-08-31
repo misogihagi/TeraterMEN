@@ -1,36 +1,36 @@
 import * as fs from 'fs'
 import * as t from 'teratermen'
-import * as path from 'path'
+import path from 'path'
 import * as config from '../../server.conf.js'
 
 export const DefaultOption = {
   log: {
     default: {
-      dir: path(__dirname, '/../../log/'),
+      dir: path.join(__dirname, '/../../log/'),
       ext: 'log.txt',
       name: Date.now().toString(),
       encording: 'utf-8'
     },
     client: {
       bin: {
-        dir: path(__dirname, '/../../log/'),
+        dir: path.join(__dirname, '/../../log/'),
         ext: 'bin.txt',
         name: Date.now().toString() + '_{session}_client'
       },
       txt: {
-        dir: path(__dirname, '/../../log/'),
+        dir: path.join(__dirname, '/../../log/'),
         ext: 'txt',
         name: Date.now().toString() + '_{session}_client'
       }
     },
     host: {
       bin: {
-        dir: path(__dirname, '/../../log/'),
+        dir: path.join(__dirname, '/../../log/'),
         ext: 'bin.txt',
         name: Date.now().toString() + '_{session}_host'
       },
       txt: {
-        dir: path(__dirname, '/../../log/'),
+        dir: path.join(__dirname, '/../../log/'),
         ext: 'txt',
         name: Date.now().toString() + '_{session}_host'
       }

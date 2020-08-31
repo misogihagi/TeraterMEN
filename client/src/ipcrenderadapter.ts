@@ -1,4 +1,4 @@
-const { ipcRenderer } = window;
+const ipcRenderer = window['ipcRenderer'];
 export let id;
 ipcRenderer.invoke('connect').then((result) => {
 	id = result;
