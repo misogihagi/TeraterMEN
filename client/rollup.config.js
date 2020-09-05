@@ -7,6 +7,16 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import css from "rollup-plugin-css-only";
 import nodePolyfills from 'rollup-plugin-node-polyfills';
+import replace from '@rollup/plugin-replace';
+
+import { config } from 'dotenv'
+config({ path: '../.env' })
+let moduleadapter
+if(process.env.platform === 'express'){
+	moduleadapter='./socketioadapter'
+}else if(process.env.platform === './socketioadapter' ){
+	moduleadapter='./ipcrenderadapter'
+}
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -30,7 +40,7 @@ function serve() {
 		}
 	};
 }
-
+	
 export default {
 	input: 'src/main.ts',
 	output: {
@@ -42,6 +52,9 @@ export default {
 	plugins: [
 //		nodePolyfills(),
 		css({ output: "public/build/extra.css" }),
+		replace({
+			moduleadapter: moduleadapter,
+		}),
 		svelte({
 			// enable run-time checks when not in production
 			dev: !production,

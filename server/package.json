@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp build:server",
     "lint": "gulp lint:server",
     "test": "mocha",
     "coverage": "nyc npm run test"

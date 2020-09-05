@@ -5,6 +5,7 @@
   "main": "./server/dist/express.js",
   "scripts": {
     "lint": "eslint --init",
+    "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "electron": "electron ./server/dist/electron.js",
     "pack": "electron-packager ./"
