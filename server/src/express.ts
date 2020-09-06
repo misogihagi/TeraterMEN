@@ -31,6 +31,7 @@ io.on('connection', function (socket) {
         username: config.username,
         password: config.password,
         port: config.port,
+        privateKey: config.privateKey,
         onconnect: () => {
           io.to(msg.id).emit('join', 'reconnect')
         },

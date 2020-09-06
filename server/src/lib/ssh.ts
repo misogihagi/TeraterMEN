@@ -36,6 +36,7 @@ export class Ssh extends LibCommon {
       port: config.port || 22,
       username: config.username || '',
       password: config.password || '',
+      privateKey: config.privateKey || '',
       algorithms: {
         kex: ALGORITHMS.SUPPORTED_KEX,
         cipher: ALGORITHMS.SUPPORTED_CIPHER

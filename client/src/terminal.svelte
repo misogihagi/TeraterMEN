@@ -11,6 +11,8 @@ import * as adapter from 'moduleadapter'
 import { key2buf } from './key2buf';
 import { str2buf } from './str2buf';
 
+import Ttmendlg from './Ttmendlg.svelte';
+
 const loadingfilecount = 12;
 
 const cssfile = `loading/load${Math.floor(Math.random() * loadingfilecount)}.css`;
@@ -25,6 +27,12 @@ const term = new Terminal();
 const fitAddon = new FitAddon();
 term.loadAddon(fitAddon);
 
+const join = config=>{
+	adapter.emit('join', {
+		id: session,
+		config: config,
+	});
+}
 const store = localStorage.getItem('store') ? JSON.parse(localStorage.getItem('store')) : {};
 let session = '';
 adapter.once('connect', () => {
@@ -35,12 +43,7 @@ adapter.once('connect', () => {
 		}
 	});
 	if (!session) session = adapter.id;
-	if (hostConfig.hostname) {
-		adapter.emit('join', {
-			id: session,
-			config: hostConfig,
-		});
-	}
+	if (hostConfig.hostname) join(hostConfig)
 });
 adapter.once('join', (msg) => {
 	if (msg === 'reconnect') {
@@ -71,11 +74,8 @@ onMount(() => {
 	document.getElementById('hash').addEventListener('change', (e) => {
 		hostConfig = URI(e.target.value)._parts;
 
-		if (hostConfig.hostname) {
-			adapter.emit('join', {
-				id: session,
-				config: hostConfig,
-			});
+		if (hostConfig.hostname){
+			join(hostConfig)
 			localStorage.setItem('store', JSON.stringify(store));
 			document.location.hash = e.target.value;
 		}
@@ -112,7 +112,12 @@ onMount(() => {
 		overlay.style.height = xscreen.style.height;
 	})(document.getElementById('overlay'), document.querySelector('.xterm-screen'));
 });
+function buyby(e){
+	join(e.detail)
+	console.log(e.detail)
+}
 </script>
+<Ttmendlg on:hostdeal={buyby}></Ttmendlg>
 <main>
 	<input id="hash">
 	<div id="wrapper">
