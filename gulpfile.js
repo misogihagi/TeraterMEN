@@ -2,6 +2,7 @@ const gulp = require("gulp");
 const gulpIf = require('gulp-if');
 const run = require('gulp-run');
 
+const { exec } = require('child_process');
 const ts = require("gulp-typescript");
 const clientTsProject = ts.createProject('./client/tsconfig.json');
 const serverTsProject = ts.createProject('./server/tsconfig.json');
@@ -32,10 +33,11 @@ const [env,platform]=process.argv.slice(3).reduce(
     return process.env[i]
 })
 
-gulp.task("build:client", function() {
-  return clientTsProject.src()
-    .pipe(clientTsProject())
-    .js.pipe(gulp.dest('client/public/build'));
+gulp.task("build:client", (done) => {
+  exec('cd client && npm run build' , function (err, stdout, stderr) {
+    if(err)console.log(err);
+    done()
+  });
 });
 gulp.task("build:server", function() {
   return serverTsProject.src()
