@@ -74,6 +74,18 @@ gulp.task('lint:server:fix', () => {
           gulp.dest('server/src/')))
         .pipe(eslint.failAfterError());
 });
+gulp.task('watch:client', () => {
+  const watcher = gulp.watch('client/src/*.*', gulp.parallel('build:client'));
+  watcher.on('change', function(event) {
+    console.log('File ' + event + ' was changed...');
+  });
+});
+gulp.task('watch:server', () => {
+  const watcher = gulp.watch('server/src/*.*', gulp.parallel('build:server'));
+  watcher.on('change', function(event) {
+    console.log('File ' + event + ' was changed...');
+  });
+});
 gulp.task('build',
     gulp.parallel(
         'build:client',
@@ -106,10 +118,16 @@ gulp.task('lint',
         'lint:server'
     )
 );
+gulp.task('watch',
+    gulp.parallel(
+        'watch:client',
+        'watch:server'
+    )
+);
 gulp.task('start', 
-    gulp.series(
+    gulp.parallel(
       'build',
-      (done)=>{return run('node server/dist/index').exec()}
+      (done)=>{return run('node server/dist/express').exec()}
     )
 );
 

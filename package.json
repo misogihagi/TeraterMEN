@@ -8,7 +8,9 @@
     "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "electron": "electron ./server/dist/electron.js",
-    "pack": "electron-packager ./"
+    "pack": "electron-packager ./",
+    "start": "gulp start",
+    "watch": "gulp watch"
   },
   "author": "",
   "license": "ISC",
