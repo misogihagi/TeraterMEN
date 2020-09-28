@@ -1,3 +1,27 @@
+export interface IKeyboardEvent {
+  altKey: boolean;
+  ctrlKey: boolean;
+  shiftKey: boolean;
+  metaKey: boolean;
+  keyCode: number;
+  key: string;
+  type: string;
+}
+
+
+export enum KeyboardResultType {
+  SEND_KEY,
+  SELECT_ALL,
+  PAGE_UP,
+  PAGE_DOWN
+}
+
+export interface IKeyboardResult {
+  type: KeyboardResultType;
+  cancel: boolean;
+  key: string | undefined;
+}
+
 export interface JOINMSG {
 id: string,
 config:{ //URI(document.location.search.replace(/\?q=(.+)/, '$1'))._parts,

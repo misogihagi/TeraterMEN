@@ -66,7 +66,7 @@ adapter.on('relay', (msg) => {
 term.onKey((e) => {
 	adapter.emit('relay', {
 		id: session,
-		buf: key2buf(e.domEvent),
+		buf: key2buf(e.domEvent,term._core._coreService.decPrivateModes),
 	});
 });
 
