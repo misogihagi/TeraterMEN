@@ -1,3 +1,4 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/d44bc114e561f290968b/maintainability)](https://codeclimate.com/github/misogihagi/TeraterMEN/maintainability)
 # teraterMENとは
 teraterMENは[teraterm](https://ja.osdn.net/projects/ttssh2/)をもとにしたターミナルエミュレーターです。
 
