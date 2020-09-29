@@ -4,8 +4,12 @@
  * @license MIT
  */
 import type { IKeyboardEvent, IKeyboardResult } from 'teratermen';
-import { KeyboardResultType } from 'teratermen';
-
+const enum KeyboardResultType {
+  SEND_KEY,
+  SELECT_ALL,
+  PAGE_UP,
+  PAGE_DOWN
+}
 export namespace C0 {
   /** Null (Caret = ^@, C = \0) */
   export const NUL = '\x00';

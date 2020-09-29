@@ -8,14 +8,6 @@ export interface IKeyboardEvent {
   type: string;
 }
 
-
-export enum KeyboardResultType {
-  SEND_KEY,
-  SELECT_ALL,
-  PAGE_UP,
-  PAGE_DOWN
-}
-
 export interface IKeyboardResult {
   type: KeyboardResultType;
   cancel: boolean;
