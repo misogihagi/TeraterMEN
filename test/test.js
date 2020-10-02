@@ -1,4 +1,4 @@
-require('./ssh').then(stream => {
+function test (stream) {
   stream.write('ctrl+c ends this test\n');
   stream.on('data', buf => {
     console.log(buf)
@@ -9,4 +9,7 @@ require('./ssh').then(stream => {
     }
   })
   const intervalObj = setInterval(() => stream.write('.'), 700);
-})
+}
+
+require('./ssh').then(test)
+require('./telnet').then(test)
