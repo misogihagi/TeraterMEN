@@ -187,31 +187,6 @@ export function evaluateKeyboardEvent(
       // left-arrow
     case 39:
       // right-arrow
-      if (ev.metaKey) {
-        break;
-      }
-      const DorC = ev.keyCode === 37 ? 'D' : 'C'
-      if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + DorC;
-        // HACK: Make Alt + left-arrow behave like Ctrl + left-arrow: move one word backwards
-        // HACK: Make Alt + right-arrow behave like Ctrl + right-arrow: move one word forward
-        // http://unix.stackexchange.com/a/108106
-        // macOS uses different escape sequences than linux
-        if (result.key === C0.ESC + '[1;3' + DorC) {
-          if (isMac) {
-            result.key = C0.ESC + DorC === 'D' ? 'b' : 'f';
-          } else {
-            result.key = C0.ESC + '[1;5' + DorC;
-          }
-        }
-      } else {
-        const keyInput = 
-        DorC === "C" ? "UIKeyInputRightArrow" :
-        DorC === "D" ? "UIKeyInputLeftArrow" : ""
-        
-        result.key = C0.ESC + keyResultMap[keyInput][applicationCursorMode ? 'applicationCursorMode' : 'notApplicationCursorMode'];
-      }
-      break;
     case 38:
       // up-arrow
     case 40:
@@ -219,22 +194,35 @@ export function evaluateKeyboardEvent(
       if (ev.metaKey) {
         break;
       }
-      const AorB = ev.keyCode === 38 ? "A" : "B"
+      const ABCD = 'DACB'[ev.keyCode-37]
       if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + AorB;
+        result.key = C0.ESC + '[1;' + (modifiers + 1) + ABCD;
+        // HACK: Make Alt + left-arrow behave like Ctrl + left-arrow: move one word backwards
+        // HACK: Make Alt + right-arrow behave like Ctrl + right-arrow: move one word forward
         // HACK: Make Alt + up-arrow behave like Ctrl + up-arrow
         // HACK: Make Alt + down-arrow behave like Ctrl + down-arrow
         // http://unix.stackexchange.com/a/108106
         // macOS uses different escape sequences than linux
-        if (result.key === C0.ESC + '[1;3' + AorB) {
-          if (!isMac) {
-            result.key = C0.ESC + '[1;5' + AorB;
+        if (result.key === C0.ESC + '[1;3' + ABCD) {
+          const leftRightOrUpDown = (ABCD === "C" || ABCD === "D") ? "leftRight" : "upDown"
+          if (leftRightOrUpDown === "leftRight") {
+            if (isMac) {
+              result.key = C0.ESC + ABCD === 'D' ? 'b' : 'f';
+            } else {
+              result.key = C0.ESC + '[1;5' + ABCD;
+            }
+          } else if (leftRightOrUpDown === "upDown") {
+            if (!isMac) {
+              result.key = C0.ESC + '[1;5' + ABCD;
+            }
           }
         }
       } else {
         const keyInput = 
-        AorB === "A" ? "UIKeyInputUpArrow" :
-        AorB === "B" ? "UIKeyInputDownArrow" : ""
+        ABCD === "A" ? "UIKeyInputUpArrow" :
+        ABCD === "B" ? "UIKeyInputDownArrow" :
+        ABCD === "C" ? "UIKeyInputRightArrow" :
+        ABCD === "D" ? "UIKeyInputLeftArrow" : ""
         
         result.key = C0.ESC + keyResultMap[keyInput][applicationCursorMode ? 'applicationCursorMode' : 'notApplicationCursorMode'];
       }
