@@ -125,35 +125,28 @@ export function evaluateKeyboardEvent(
     key: undefined
   };
   const modifiers = (ev.shiftKey ? 1 : 0) | (ev.altKey ? 2 : 0) | (ev.ctrlKey ? 4 : 0) | (ev.metaKey ? 8 : 0);
+  const keyResultMap = {
+    UIKeyInputUpArrow:{
+      applicationCursorMode:'OA',
+      notApplicationCursorMode:'[A',
+    },
+    UIKeyInputLeftArrow:{
+      applicationCursorMode:'OD',
+      notApplicationCursorMode:'[D',
+    },
+    UIKeyInputRightArrow:{
+      applicationCursorMode:'OC',
+      notApplicationCursorMode:'[C',
+    },
+    UIKeyInputDownArrow:{
+      applicationCursorMode:'OB',
+      notApplicationCursorMode:'[B',
+    },
+  }
   switch (ev.keyCode) {
     case 0:
-      if (ev.key === 'UIKeyInputUpArrow') {
-        if (applicationCursorMode) {
-          result.key = C0.ESC + 'OA';
-        } else {
-          result.key = C0.ESC + '[A';
-        }
-      }
-      else if (ev.key === 'UIKeyInputLeftArrow') {
-        if (applicationCursorMode) {
-          result.key = C0.ESC + 'OD';
-        } else {
-          result.key = C0.ESC + '[D';
-        }
-      }
-      else if (ev.key === 'UIKeyInputRightArrow') {
-        if (applicationCursorMode) {
-          result.key = C0.ESC + 'OC';
-        } else {
-          result.key = C0.ESC + '[C';
-        }
-      }
-      else if (ev.key === 'UIKeyInputDownArrow') {
-        if (applicationCursorMode) {
-          result.key = C0.ESC + 'OB';
-        } else {
-          result.key = C0.ESC + '[B';
-        }
+      if (Object.keys(keyResultMap).includes(ev.key)) {
+        result.key = C0.ESC + keyResultMap[ev.key][applicationCursorMode ? 'applicationCursorMode' : 'notApplicationCursorMode'];
       }
       break;
     case 8:
