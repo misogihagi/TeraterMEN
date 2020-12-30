@@ -163,69 +163,69 @@ export function evaluateKeyboardEvent(
       }
     }
   }
-  function f1tof12(keyCode:number, modifiers:number){
-    const functionKeyMap ={
-      112:{
-        leftValue  :'[1;' ,
-        rightValue : 'P'  ,
-        noModifiers:'OP'  ,
-        },
-        113:{
-        leftValue  :'[1;' ,
-        rightValue : 'Q'  ,
-        noModifiers:'OQ'  ,
-        },
-        114:{
-        leftValue  :'[1;' ,
-        rightValue : 'R'  ,
-        noModifiers:'OR'  ,
-        },
-        115:{
-        leftValue  :'[1;' ,
-        rightValue : 'S'  ,
-        noModifiers:'OS'  ,
-        },
-        116:{
-        leftValue  :'[15;', 
-        rightValue : '~'  ,
-        noModifiers:'[15~',
-        },
-        117:{
-        leftValue  :'[17;', 
-        rightValue : '~'  ,
-        noModifiers:'[17~',
-        },
-        118:{
-        leftValue  :'[18;', 
-        rightValue : '~'  ,
-        noModifiers:'[18~',
-        },
-        119:{
-        leftValue  :'[19;', 
-        rightValue : '~'  ,
-        noModifiers:'[19~',
-        },
-        120:{
-        leftValue  :'[20;', 
-        rightValue : '~'  ,
-        noModifiers:'[20~',
-        },
-        121:{
-        leftValue  :'[21;', 
-        rightValue : '~'  ,
-        noModifiers:'[21~',
-        },
-        122:{
-        leftValue  :'[23;', 
-        rightValue : '~'  ,
-        noModifiers:'[23~',
-        },
-        123:{
-        leftValue  :'[24;', 
-        rightValue : '~'  ,
-        noModifiers:'[24~',
-        },        
-    }
+  const functionKeyMap ={
+    112:{
+      leftValue  :'[1;' ,
+      rightValue : 'P'  ,
+      noModifiers:'OP'  ,
+      },
+      113:{
+      leftValue  :'[1;' ,
+      rightValue : 'Q'  ,
+      noModifiers:'OQ'  ,
+      },
+      114:{
+      leftValue  :'[1;' ,
+      rightValue : 'R'  ,
+      noModifiers:'OR'  ,
+      },
+      115:{
+      leftValue  :'[1;' ,
+      rightValue : 'S'  ,
+      noModifiers:'OS'  ,
+      },
+      116:{
+      leftValue  :'[15;', 
+      rightValue : '~'  ,
+      noModifiers:'[15~',
+      },
+      117:{
+      leftValue  :'[17;', 
+      rightValue : '~'  ,
+      noModifiers:'[17~',
+      },
+      118:{
+      leftValue  :'[18;', 
+      rightValue : '~'  ,
+      noModifiers:'[18~',
+      },
+      119:{
+      leftValue  :'[19;', 
+      rightValue : '~'  ,
+      noModifiers:'[19~',
+      },
+      120:{
+      leftValue  :'[20;', 
+      rightValue : '~'  ,
+      noModifiers:'[20~',
+      },
+      121:{
+      leftValue  :'[21;', 
+      rightValue : '~'  ,
+      noModifiers:'[21~',
+      },
+      122:{
+      leftValue  :'[23;', 
+      rightValue : '~'  ,
+      noModifiers:'[23~',
+      },
+      123:{
+      leftValue  :'[24;', 
+      rightValue : '~'  ,
+      noModifiers:'[24~',
+      },        
+  }
+function f1tof12(keyCode:number, modifiers:number){
     if(modifiers) return functionKeyMap["" + keyCode].leftValue + (modifiers + 1) + functionKeyMap[keyCode].rightValue
     else return functionKeyMap["" + keyCode].noModifiers
   }
