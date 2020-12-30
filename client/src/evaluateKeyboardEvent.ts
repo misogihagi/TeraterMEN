@@ -326,38 +326,26 @@ function f1tof12(keyCode:number, modifiers:number){
       break;
     case 36:
       // home
-      if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'H';
-      } else if (applicationCursorMode) {
-        result.key = C0.ESC + 'OH';
-      } else {
-        result.key = C0.ESC + '[H';
-      }
-      break;
     case 35:
       // end
+      const homeOrEnd= ev.keyCode === 36 ? 'home' : 'end'
       if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'F';
+        result.key = C0.ESC + '[1;' + (modifiers + 1) + (homeOrEnd==='home' ? 'H' : 'F');
       } else if (applicationCursorMode) {
-        result.key = C0.ESC + 'OF';
+        result.key = C0.ESC + (homeOrEnd==='home' ? 'OH' : 'OF');
       } else {
-        result.key = C0.ESC + '[F';
+        result.key = C0.ESC + (homeOrEnd==='home' ? '[H' : '[F');
       }
       break;
     case 33:
       // page up
-      if (ev.shiftKey) {
-        result.type = KeyboardResultType.PAGE_UP;
-      } else {
-        result.key = C0.ESC + '[5~';
-      }
-      break;
     case 34:
       // page down
+      const upOrDown= ev.keyCode === 33 ? 'up' : 'down'
       if (ev.shiftKey) {
-        result.type = KeyboardResultType.PAGE_DOWN;
+        result.type = upOrDown === 'up' ? KeyboardResultType.PAGE_UP : KeyboardResultType.PAGE_DOWN;
       } else {
-        result.key = C0.ESC + '[6~';
+        result.key = C0.ESC + (upOrDown === 'up' ? '[5~' : '[6~');
       }
       break;
     case 112:
