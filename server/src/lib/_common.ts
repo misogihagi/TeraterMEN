@@ -207,14 +207,12 @@ export class Logger {
   }
 
   close () {
-    if (this.client) {
-      if (this.client.bin) this.client.bin.close()
-      if (this.client.txt) this.client.txt.close()
-    }
-    if (this.host) {
-      if (this.host.bin) this.host.bin.close()
-      if (this.host.txt) this.host.txt.close()
-    }
+    ((targets)=>{
+      targets.forEach(target => {
+        if (target.bin) target.bin.close()
+        if (target.txt) target.txt.close()        
+      });
+    })([this.client,this.host])
   }
 }
 
