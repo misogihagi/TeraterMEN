@@ -4,6 +4,7 @@
   "description": "",
   "main": "./server/dist/express.js",
   "scripts": {
+    "install": "gulp install",
     "lint": "eslint --init",
     "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1",
