@@ -5,7 +5,9 @@ teraterMENは[teraterm](https://ja.osdn.net/projects/ttssh2/)をもとにした�
 # インストール
 ```bash
 git clone https://github.com/misogihagi/TeraterMEN.git
-npm i
+npm install
+npm run build
+npm start
 ```
 # 使い方
 ```
