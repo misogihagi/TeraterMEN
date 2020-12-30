@@ -144,7 +144,7 @@ export function evaluateKeyboardEvent(
     },
   }
   type direction = "up" | "left" | "right" | "down"
-  function resultArrowKey(result, arrow:direction){
+  function resultArrowKey(result:IKeyboardResult, arrow:direction){
     const leftRightOrUpDown = (arrow === "left" || arrow === "right") ? "leftRight" : "upDown"
     const ABCD = 
       arrow === "up" ? "A" :
@@ -162,6 +162,72 @@ export function evaluateKeyboardEvent(
         result.key = C0.ESC + '[1;5' + ABCD;
       }
     }
+  }
+  const functionKeyMap ={
+    112:{
+      leftValue  :'[1;' ,
+      rightValue : 'P'  ,
+      noModifiers:'OP'  ,
+      },
+      113:{
+      leftValue  :'[1;' ,
+      rightValue : 'Q'  ,
+      noModifiers:'OQ'  ,
+      },
+      114:{
+      leftValue  :'[1;' ,
+      rightValue : 'R'  ,
+      noModifiers:'OR'  ,
+      },
+      115:{
+      leftValue  :'[1;' ,
+      rightValue : 'S'  ,
+      noModifiers:'OS'  ,
+      },
+      116:{
+      leftValue  :'[15;', 
+      rightValue : '~'  ,
+      noModifiers:'[15~',
+      },
+      117:{
+      leftValue  :'[17;', 
+      rightValue : '~'  ,
+      noModifiers:'[17~',
+      },
+      118:{
+      leftValue  :'[18;', 
+      rightValue : '~'  ,
+      noModifiers:'[18~',
+      },
+      119:{
+      leftValue  :'[19;', 
+      rightValue : '~'  ,
+      noModifiers:'[19~',
+      },
+      120:{
+      leftValue  :'[20;', 
+      rightValue : '~'  ,
+      noModifiers:'[20~',
+      },
+      121:{
+      leftValue  :'[21;', 
+      rightValue : '~'  ,
+      noModifiers:'[21~',
+      },
+      122:{
+      leftValue  :'[23;', 
+      rightValue : '~'  ,
+      noModifiers:'[23~',
+      },
+      123:{
+      leftValue  :'[24;', 
+      rightValue : '~'  ,
+      noModifiers:'[24~',
+      },        
+  }
+function f1tof12(keyCode:number, modifiers:number){
+    if(modifiers) return functionKeyMap["" + keyCode].leftValue + (modifiers + 1) + functionKeyMap[keyCode].rightValue
+    else return functionKeyMap["" + keyCode].noModifiers
   }
 
   switch (ev.keyCode) {
@@ -295,89 +361,19 @@ export function evaluateKeyboardEvent(
       }
       break;
     case 112:
-      // F1-F12
-      if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'P';
-      } else {
-        result.key = C0.ESC + 'OP';
-      }
-      break;
     case 113:
-      if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'Q';
-      } else {
-        result.key = C0.ESC + 'OQ';
-      }
-      break;
     case 114:
-      if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'R';
-      } else {
-        result.key = C0.ESC + 'OR';
-      }
-      break;
     case 115:
-      if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'S';
-      } else {
-        result.key = C0.ESC + 'OS';
-      }
-      break;
     case 116:
-      if (modifiers) {
-        result.key = C0.ESC + '[15;' + (modifiers + 1) + '~';
-      } else {
-        result.key = C0.ESC + '[15~';
-      }
-      break;
     case 117:
-      if (modifiers) {
-        result.key = C0.ESC + '[17;' + (modifiers + 1) + '~';
-      } else {
-        result.key = C0.ESC + '[17~';
-      }
-      break;
     case 118:
-      if (modifiers) {
-        result.key = C0.ESC + '[18;' + (modifiers + 1) + '~';
-      } else {
-        result.key = C0.ESC + '[18~';
-      }
-      break;
     case 119:
-      if (modifiers) {
-        result.key = C0.ESC + '[19;' + (modifiers + 1) + '~';
-      } else {
-        result.key = C0.ESC + '[19~';
-      }
-      break;
     case 120:
-      if (modifiers) {
-        result.key = C0.ESC + '[20;' + (modifiers + 1) + '~';
-      } else {
-        result.key = C0.ESC + '[20~';
-      }
-      break;
     case 121:
-      if (modifiers) {
-        result.key = C0.ESC + '[21;' + (modifiers + 1) + '~';
-      } else {
-        result.key = C0.ESC + '[21~';
-      }
-      break;
     case 122:
-      if (modifiers) {
-        result.key = C0.ESC + '[23;' + (modifiers + 1) + '~';
-      } else {
-        result.key = C0.ESC + '[23~';
-      }
-      break;
     case 123:
-      if (modifiers) {
-        result.key = C0.ESC + '[24;' + (modifiers + 1) + '~';
-      } else {
-        result.key = C0.ESC + '[24~';
-      }
+      // F1-F12
+      result.key = f1tof12(ev.keyCode, modifiers)
       break;
     default:
       // a-z and space
