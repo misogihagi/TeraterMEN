@@ -3,7 +3,6 @@
  * Copyright (c) 2012-2013, Christopher Jeffrey (MIT License)
  * @license MIT
  */
-import { update_keyed_each } from 'svelte/internal';
 import type { IKeyboardEvent, IKeyboardResult } from 'teratermen';
 const enum KeyboardResultType {
   SEND_KEY,
@@ -144,6 +143,27 @@ export function evaluateKeyboardEvent(
       notApplicationCursorMode:'[B',
     },
   }
+  type direction = "up" | "left" | "right" | "down"
+  function resultArrowKey(result, arrow:direction){
+    const leftRightOrUpDown = (arrow === "left" || arrow === "right") ? "leftRight" : "upDown"
+    const ABCD = 
+      arrow === "up" ? "A" :
+      arrow === "left" ? "D" :
+      arrow === "right" ? "C" :
+      arrow === "down" ? "B" : ""
+    if (leftRightOrUpDown === "leftRight") {
+      if (isMac) {
+        result.key = C0.ESC + arrow === "left" ? 'b' : 'f';
+      } else {
+        result.key = C0.ESC + '[1;5' + ABCD;
+      }
+    } else if (leftRightOrUpDown === "upDown") {
+      if (!isMac) {
+        result.key = C0.ESC + '[1;5' + ABCD;
+      }
+    }
+  }
+
   switch (ev.keyCode) {
     case 0:
       if (Object.keys(keyResultMap).includes(ev.key)) {
@@ -204,18 +224,12 @@ export function evaluateKeyboardEvent(
         // http://unix.stackexchange.com/a/108106
         // macOS uses different escape sequences than linux
         if (result.key === C0.ESC + '[1;3' + ABCD) {
-          const leftRightOrUpDown = (ABCD === "C" || ABCD === "D") ? "leftRight" : "upDown"
-          if (leftRightOrUpDown === "leftRight") {
-            if (isMac) {
-              result.key = C0.ESC + ABCD === 'D' ? 'b' : 'f';
-            } else {
-              result.key = C0.ESC + '[1;5' + ABCD;
-            }
-          } else if (leftRightOrUpDown === "upDown") {
-            if (!isMac) {
-              result.key = C0.ESC + '[1;5' + ABCD;
-            }
-          }
+          const arrow =  
+          ABCD  === "A" ? "up" :
+          ABCD === "D" ? "left" :
+          ABCD === "C" ? "right" :
+          ABCD === "B" ? "down" : null
+          resultArrowKey(result, arrow)
         }
       } else {
         const keyInput = 
