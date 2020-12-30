@@ -1,4 +1,7 @@
-const a=require( '../src/lib/_common')
+const { execSync } = require('child_process')
+
+const stdout = execSync('npx tsc --project tsconfig.json')
+const a=require( '../dist/lib/_common')
 const config1={
     log:{
       default:{},
@@ -70,7 +73,6 @@ describe('config', () => {
   });
   it('config2', () => {
     const logger=new a.LoggerOption(config2)
-    console.log(logger)
     assert.equal(logger.ClientBinaryFullpath,'./c.txt');
     assert.equal(logger.ClientTextFullpath,'clidir\\bin.txt.bin.txt');
     assert.equal(logger.HostBinaryFullpath,'log\\asd\\bin.txt.bin.txt');
