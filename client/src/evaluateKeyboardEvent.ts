@@ -232,13 +232,14 @@ export function evaluateKeyboardEvent(
           resultArrowKey(result, arrow)
         }
       } else {
-        const keyInput = 
-        ABCD === "A" ? "UIKeyInputUpArrow" :
-        ABCD === "B" ? "UIKeyInputDownArrow" :
-        ABCD === "C" ? "UIKeyInputRightArrow" :
-        ABCD === "D" ? "UIKeyInputLeftArrow" : ""
+        const keyInput = {
+          "A" : "UIKeyInputUpArrow",
+          "B" : "UIKeyInputDownArrow",
+          "C" : "UIKeyInputRightArrow",
+          "D" : "UIKeyInputLeftArrow",
+        }
         
-        result.key = C0.ESC + keyResultMap[keyInput][applicationCursorMode ? 'applicationCursorMode' : 'notApplicationCursorMode'];
+        result.key = C0.ESC + keyResultMap[keyInput[ABCD]][applicationCursorMode ? 'applicationCursorMode' : 'notApplicationCursorMode'];
       }
       break;
     case 45:
