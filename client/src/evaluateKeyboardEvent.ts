@@ -3,6 +3,7 @@
  * Copyright (c) 2012-2013, Christopher Jeffrey (MIT License)
  * @license MIT
  */
+import { update_keyed_each } from 'svelte/internal';
 import type { IKeyboardEvent, IKeyboardResult } from 'teratermen';
 const enum KeyboardResultType {
   SEND_KEY,
@@ -184,78 +185,58 @@ export function evaluateKeyboardEvent(
       break;
     case 37:
       // left-arrow
-      if (ev.metaKey) {
-        break;
-      }
-      if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'D';
-        // HACK: Make Alt + left-arrow behave like Ctrl + left-arrow: move one word backwards
-        // http://unix.stackexchange.com/a/108106
-        // macOS uses different escape sequences than linux
-        if (result.key === C0.ESC + '[1;3D') {
-          result.key = C0.ESC + (isMac ? 'b' : '[1;5D');
-        }
-      } else if (applicationCursorMode) {
-        result.key = C0.ESC + 'OD';
-      } else {
-        result.key = C0.ESC + '[D';
-      }
-      break;
     case 39:
       // right-arrow
       if (ev.metaKey) {
         break;
       }
+      const DorC = ev.keyCode === 37 ? 'D' : 'C'
       if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'C';
+        result.key = C0.ESC + '[1;' + (modifiers + 1) + DorC;
+        // HACK: Make Alt + left-arrow behave like Ctrl + left-arrow: move one word backwards
         // HACK: Make Alt + right-arrow behave like Ctrl + right-arrow: move one word forward
         // http://unix.stackexchange.com/a/108106
         // macOS uses different escape sequences than linux
-        if (result.key === C0.ESC + '[1;3C') {
-          result.key = C0.ESC + (isMac ? 'f' : '[1;5C');
+        if (result.key === C0.ESC + '[1;3' + DorC) {
+          if (isMac) {
+            result.key = C0.ESC + DorC === 'D' ? 'b' : 'f';
+          } else {
+            result.key = C0.ESC + '[1;5' + DorC;
+          }
         }
-      } else if (applicationCursorMode) {
-        result.key = C0.ESC + 'OC';
       } else {
-        result.key = C0.ESC + '[C';
+        const keyInput = 
+        DorC === "C" ? "UIKeyInputRightArrow" :
+        DorC === "D" ? "UIKeyInputLeftArrow" : ""
+        
+        result.key = C0.ESC + keyResultMap[keyInput][applicationCursorMode ? 'applicationCursorMode' : 'notApplicationCursorMode'];
       }
       break;
     case 38:
       // up-arrow
-      if (ev.metaKey) {
-        break;
-      }
-      if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'A';
-        // HACK: Make Alt + up-arrow behave like Ctrl + up-arrow
-        // http://unix.stackexchange.com/a/108106
-        // macOS uses different escape sequences than linux
-        if (!isMac && result.key === C0.ESC + '[1;3A') {
-          result.key = C0.ESC + '[1;5A';
-        }
-      } else if (applicationCursorMode) {
-        result.key = C0.ESC + 'OA';
-      } else {
-        result.key = C0.ESC + '[A';
-      }
-      break;
     case 40:
       // down-arrow
       if (ev.metaKey) {
         break;
       }
+      const AorB = ev.keyCode === 38 ? "A" : "B"
       if (modifiers) {
-        result.key = C0.ESC + '[1;' + (modifiers + 1) + 'B';
+        result.key = C0.ESC + '[1;' + (modifiers + 1) + AorB;
+        // HACK: Make Alt + up-arrow behave like Ctrl + up-arrow
         // HACK: Make Alt + down-arrow behave like Ctrl + down-arrow
         // http://unix.stackexchange.com/a/108106
         // macOS uses different escape sequences than linux
-        if (!isMac && result.key === C0.ESC + '[1;3B') {
-          result.key = C0.ESC + '[1;5B';
+        if (result.key === C0.ESC + '[1;3' + AorB) {
+          if (!isMac) {
+            result.key = C0.ESC + '[1;5' + AorB;
+          }
         }
-      } else if (applicationCursorMode) {
-        result.key = C0.ESC + 'OB';
       } else {
-        result.key = C0.ESC + '[B';
+        const keyInput = 
+        AorB === "A" ? "UIKeyInputUpArrow" :
+        AorB === "B" ? "UIKeyInputDownArrow" : ""
+        
+        result.key = C0.ESC + keyResultMap[keyInput][applicationCursorMode ? 'applicationCursorMode' : 'notApplicationCursorMode'];
       }
       break;
     case 45:
