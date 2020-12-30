@@ -396,9 +396,9 @@ function f1tof12(keyCode:number, modifiers:number){
         if (ev.keyCode === 65) { // cmd + a
           result.type = KeyboardResultType.SELECT_ALL;
         }
-      } else if (ev.key && !ev.ctrlKey && !ev.altKey && !ev.metaKey && ev.key.length) {
+      } else if (ev.key && !ev.ctrlKey && !ev.altKey && !ev.metaKey && ev.key.length === 1) {
         // Include only keys that that result in a _single_ character; don't include num lock, volume up, etc.
-        if(ev.keyCode >= 48 && ev.key.length === 1)
+        if(ev.keyCode >= 48)
           result.key = ev.key;
       } else if (ev.key && ev.ctrlKey) {
         if (ev.key === '_') { // ^_
