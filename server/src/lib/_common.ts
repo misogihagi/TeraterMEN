@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as t from 'teratermen'
-import path from 'path'
+import * as path from 'path'
 import * as config from '../../server.conf.js'
 
 export const DefaultOption = {
@@ -104,7 +104,7 @@ export class LoggerOption {
         fs.statSync(path.dirname(fullpath))
       } catch (error) {
         if (error.code === 'ENOENT') {
-          fs.mkdirSync(path.dirname(fullpath))
+          fs.mkdirSync(path.dirname(fullpath), { recursive: true })
         } else {
           throw error
         }
@@ -207,14 +207,12 @@ export class Logger {
   }
 
   close () {
-    if (this.client) {
-      if (this.client.bin) this.client.bin.close()
-      if (this.client.txt) this.client.txt.close()
-    }
-    if (this.host) {
-      if (this.host.bin) this.host.bin.close()
-      if (this.host.txt) this.host.txt.close()
-    }
+    ((targets)=>{
+      targets.forEach(target => {
+        if (target.bin) target.bin.close()
+        if (target.txt) target.txt.close()        
+      });
+    })([this.client,this.host])
   }
 }
 
