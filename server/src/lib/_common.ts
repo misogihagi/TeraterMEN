@@ -3,40 +3,52 @@ import * as t from 'teratermen'
 import * as path from 'path'
 import * as config from '../../server.conf.js'
 
-export const DefaultOption = {
-  log: {
-    default: {
-      dir: path.join(__dirname, '/../../log/'),
-      ext: 'log.txt',
-      name: Date.now().toString(),
-      encording: 'utf-8'
-    },
-    client: {
-      bin: {
-        dir: path.join(__dirname, '/../../log/'),
-        ext: 'bin.txt',
-        name: Date.now().toString() + '_{session}_client'
+export const DefaultOption = (()=>{
+  const now=Date.now().toString()
+  const res={
+    log: {
+      default: {
+        dir: '',
+        ext: 'log.txt',
+        name: now,
+        encording: 'utf-8'
       },
-      txt: {
-        dir: path.join(__dirname, '/../../log/'),
-        ext: 'txt',
-        name: Date.now().toString() + '_{session}_client'
-      }
-    },
-    host: {
-      bin: {
-        dir: path.join(__dirname, '/../../log/'),
-        ext: 'bin.txt',
-        name: Date.now().toString() + '_{session}_host'
+      client: {
+        bin: {
+          dir: '',
+          ext: 'bin.txt',
+          name: now + '_{session}_client'
+        },
+        txt: {
+          dir: '',
+          ext: 'txt',
+          name: now + '_{session}_client'
+        }
       },
-      txt: {
-        dir: path.join(__dirname, '/../../log/'),
-        ext: 'txt',
-        name: Date.now().toString() + '_{session}_host'
+      host: {
+        bin: {
+          dir: '',
+          ext: 'bin.txt',
+          name: now + '_{session}_host'
+        },
+        txt: {
+          dir: '',
+          ext: 'txt',
+          name: now + '_{session}_host'
+        }
       }
     }
   }
-}
+  const dir =path.join(__dirname, '/../../log/')
+  res.log.default.dir=dir
+  res.log.client.bin.dir=dir
+  res.log.client.txt.dir=dir
+  res.log.host.bin.dir=dir
+  res.log.host.txt.dir=dir
+  return res
+})()
+
+
 export class LoggerOption {
   ClientBinaryFullpath
   ClientBinaryEncording
