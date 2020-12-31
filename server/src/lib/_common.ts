@@ -7,17 +7,16 @@ export const DefaultOption = (()=>{
   const now=Date.now().toString()
   const dir =path.join(__dirname, '/../../log/')
   function log(mode){
-    return {
-      bin: {
+    function file(ext){
+      return {
         dir: dir,
-        ext: 'bin.txt',
-        name: now + '_{session}_'+mode
-      },
-      txt: {
-        dir: dir,
-        ext: 'txt',
+        ext: ext,
         name: now + '_{session}_'+mode
       }
+    }
+    return {
+      bin: file('bin.txt'),
+      txt: file('txt'),
     }
   }
   const res={
