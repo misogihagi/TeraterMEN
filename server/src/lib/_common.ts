@@ -5,46 +5,33 @@ import * as config from '../../server.conf.js'
 
 export const DefaultOption = (()=>{
   const now=Date.now().toString()
+  const dir =path.join(__dirname, '/../../log/')
+  function log(mode){
+    return {
+      bin: {
+        dir: dir,
+        ext: 'bin.txt',
+        name: now + '_{session}_'+mode
+      },
+      txt: {
+        dir: dir,
+        ext: 'txt',
+        name: now + '_{session}_'+mode
+      }
+    }
+  }
   const res={
     log: {
       default: {
-        dir: '',
+        dir: dir,
         ext: 'log.txt',
         name: now,
         encording: 'utf-8'
       },
-      client: {
-        bin: {
-          dir: '',
-          ext: 'bin.txt',
-          name: now + '_{session}_client'
-        },
-        txt: {
-          dir: '',
-          ext: 'txt',
-          name: now + '_{session}_client'
-        }
-      },
-      host: {
-        bin: {
-          dir: '',
-          ext: 'bin.txt',
-          name: now + '_{session}_host'
-        },
-        txt: {
-          dir: '',
-          ext: 'txt',
-          name: now + '_{session}_host'
-        }
-      }
+      client: log('client'),
+      host: log('host')
     }
   }
-  const dir =path.join(__dirname, '/../../log/')
-  res.log.default.dir=dir
-  res.log.client.bin.dir=dir
-  res.log.client.txt.dir=dir
-  res.log.host.bin.dir=dir
-  res.log.host.txt.dir=dir
   return res
 })()
 
