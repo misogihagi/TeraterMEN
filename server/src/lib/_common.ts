@@ -195,14 +195,15 @@ export class Logger {
   }
 
   write (buf, option) {
+    const mainWrite=target => {
+      const str = typeof buf === 'string' ? buf : buf.toString()
+      if (target.bin) target.bin.write(Array.from(buf).join(' ') + '\n')
+      if (target.txt) target.txt.write(str)
+    }
     if (option === 'input' && this.client) {
-      const str = typeof buf === 'string' ? buf : buf.toString()
-      if (this.client.bin) this.client.bin.write(Array.from(buf).join(' ') + '\n')
-      if (this.client.txt) this.client.txt.write(str)
+      mainWrite(this.client)
     } else if (option === 'output' && this.host) {
-      const str = typeof buf === 'string' ? buf : buf.toString()
-      if (this.host.bin) this.host.bin.write(Array.from(buf).join(' ') + '\n')
-      if (this.host.txt) this.host.txt.write(str)
+      mainWrite(this.host)
     }
   }
 
