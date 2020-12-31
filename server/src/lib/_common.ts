@@ -6,27 +6,25 @@ import * as config from '../../server.conf.js'
 export const DefaultOption = (()=>{
   const now=Date.now().toString()
   const dir =path.join(__dirname, '/../../log/')
-  function log(mode){
-    function file(ext){
-      return {
-        dir: dir,
-        ext: ext,
-        name: now + '_{session}_'+mode
-      }
-    }
+  function file(ext,mode?){
     return {
-      bin: file('bin.txt'),
-      txt: file('txt'),
+      dir: dir,
+      ext: ext,
+      name: now + '_{session}_' + mode
     }
   }
+function log(mode){
+    return {
+      bin: file('bin.txt',mode),
+      txt: file('txt',mode),
+    }
+  }
+  const de=file('log.txt')
+  de.name=now
+  de['encordng']='utf-8'
   const res={
     log: {
-      default: {
-        dir: dir,
-        ext: 'log.txt',
-        name: now,
-        encording: 'utf-8'
-      },
+      default: de,
       client: log('client'),
       host: log('host')
     }
