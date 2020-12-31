@@ -10,7 +10,7 @@ export const DefaultOption = (()=>{
     return {
       dir: dir,
       ext: ext,
-      name: now + '_{session}_' + mode
+      name: now + (mode ? '_{session}_' + mode : '')
     }
   }
 function log(mode){
@@ -20,7 +20,6 @@ function log(mode){
     }
   }
   const de=file('log.txt')
-  de.name=now
   de['encordng']='utf-8'
   const res={
     log: {
