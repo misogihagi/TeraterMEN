@@ -164,34 +164,27 @@ export class Logger {
     function pathReplacer (path:string) {
       return path.replace(/{session}/g, session)
     }
-    this.loggerOption = new LoggerOption(config)
-    this.client = {
-      bin: this.loggerOption.ClientBinaryFullpath === null
-        ? null : fs.createWriteStream(
-          pathReplacer(this.loggerOption.ClientBinaryFullpath),
-          this.loggerOption.ClientBinaryEncording
-        ),
-      txt:
-        this.loggerOption.ClientTextFullpath === null
+    type mode="client" | "host"
+    const createLogStream = (mode:mode):t.Log=>{
+      const binfullpath = mode === "client" ? this.loggerOption.ClientBinaryFullpath : this.loggerOption.HostBinaryFullpath
+      const txtfullpath = mode === "client" ? this.loggerOption.ClientTextFullpath : this.loggerOption.HostTextFullpath
+      const binencording=  mode === "client" ? this.loggerOption.ClientBinaryEncording : this.loggerOption.HostBinaryEncording
+      const txtencording=  mode === "client" ? this.loggerOption.ClientTextEncording : this.loggerOption.HostTextEncording
+      function createStream(fullpath, encording){
+        return fullpath === null
           ? null : fs.createWriteStream(
-            pathReplacer(this.loggerOption.ClientTextFullpath),
-            this.loggerOption.ClientTextEncording
+            pathReplacer(fullpath),
+            encording
           )
+      }
+      return {
+        bin: createStream(binfullpath, binencording),
+        txt: createStream(txtfullpath, txtencording),
+      }
     }
-
-    this.host = {
-      bin:
-            this.loggerOption.HostBinaryFullpath === null
-              ? null : fs.createWriteStream(
-                pathReplacer(this.loggerOption.HostBinaryFullpath),
-                this.loggerOption.HostBinaryEncording
-              ),
-      txt: this.loggerOption.HostBinaryEncording === null
-        ? null : fs.createWriteStream(
-          pathReplacer(this.loggerOption.HostTextFullpath),
-          this.loggerOption.HostTextEncording
-        )
-    }
+    this.loggerOption = new LoggerOption(config)
+    this.client = createLogStream("client")
+    this.host = createLogStream("host")
   }
 
   write (buf, option) {
