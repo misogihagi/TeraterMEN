@@ -3,6 +3,28 @@ import * as t from 'teratermen'
 import * as path from 'path'
 import * as config from '../../server.conf.js'
 
+function deffo (mode, option, prpty:string) {
+  let default1 = {}
+  let default2 = {}
+  let default3 = {}
+  if (mode === 'ClientBinaryFullpath' || mode === 'ClientTextFullpath') {
+    if (option?.log?.client?.default)default1 = option.log.client.default
+    default3 =
+    mode === 'ClientBinaryFullpath' ? DefaultOption.log.client.bin
+      : mode === 'ClientTextFullpath' ? DefaultOption.log.client.txt
+        : DefaultOption.log.default
+  }
+  if (mode === 'HostBinaryFullpath' || mode === 'HostTextFullpath') {
+    if (option?.log?.host?.default)default1 = option.log.host.default
+    default3 =
+    mode === 'HostBinaryFullpath' ? DefaultOption.log.host.bin
+      : mode === 'HostTextFullpath' ? DefaultOption.log.host.txt
+        : DefaultOption.log.default
+  }
+  if (option?.log?.default)default2 = option.log.default
+  return default1[prpty] || default2[prpty] || default3[prpty]
+}
+
 export const DefaultOption = (()=>{
   const now=Date.now().toString()
   const dir =path.join(__dirname, '/../../log/')
@@ -55,42 +77,21 @@ export class LoggerOption {
           : mode === 'HostBinaryFullpath' ? option.log.host.bin
             : mode === 'HostTextFullpath' ? option.log.host.txt
               : null
-      function deffo (prpty:string) {
-        let default1 = {}
-        let default2 = {}
-        let default3 = {}
-        if (mode === 'ClientBinaryFullpath' || mode === 'ClientTextFullpath') {
-          if (option?.log?.client?.default)default1 = option.log.client.default
-          default3 =
-          mode === 'ClientBinaryFullpath' ? DefaultOption.log.client.bin
-            : mode === 'ClientTextFullpath' ? DefaultOption.log.client.txt
-              : DefaultOption.log.default
-        }
-        if (mode === 'HostBinaryFullpath' || mode === 'HostTextFullpath') {
-          if (option?.log?.host?.default)default1 = option.log.host.default
-          default3 =
-          mode === 'HostBinaryFullpath' ? DefaultOption.log.host.bin
-            : mode === 'HostTextFullpath' ? DefaultOption.log.host.txt
-              : DefaultOption.log.default
-        }
-        if (option?.log?.default)default2 = option.log.default
-        return default1[prpty] || default2[prpty] || default3[prpty]
-      }
 
       if (unit.path) fullpath = unit.path
-      else if (unit.dir || deffo('dir')) {
-        const dir = unit.dir || deffo('dir')
+      else if (unit.dir || deffo(mode, option, 'dir')) {
+        const dir = unit.dir || deffo(mode, option, 'dir')
         if (unit.ext && unit.name) {
           fullpath = path.join(dir, unit.name + '.' + unit.ext)
         } else if (unit.base) {
           fullpath = path.join(dir, unit.base)
         } else {
           if (unit.name) {
-            fullpath = path.join(dir, unit.name + '.' + deffo('ext'))
+            fullpath = path.join(dir, unit.name + '.' + deffo(mode, option, 'ext'))
           } else if (unit.ext) {
-            fullpath = path.join(dir, deffo('name') + '.' + unit.ext)
+            fullpath = path.join(dir, deffo(mode, option, 'name') + '.' + unit.ext)
           } else {
-            fullpath = path.join(dir, deffo('name') + '.' + deffo('ext'))
+            fullpath = path.join(dir, deffo(mode, option, 'name') + '.' + deffo(mode, option, 'ext'))
           }
         }
       }
@@ -107,27 +108,6 @@ export class LoggerOption {
       return fullpath
     }
     function encordingResolver (mode:string) {
-      function deffo (prpty:string) {
-        let default1 = {}
-        let default2 = {}
-        let default3 = {}
-        if (mode === 'ClientBinaryFullpath' || mode === 'ClientTextFullpath') {
-          if (option?.log?.client?.default)default1 = option.log.client.default
-          default3 =
-        mode === 'ClientBinaryFullpath' ? DefaultOption.log.client.bin
-          : mode === 'ClientTextFullpath' ? DefaultOption.log.client.txt
-            : DefaultOption.log.default
-        }
-        if (mode === 'HostBinaryFullpath' || mode === 'HostTextFullpath') {
-          if (option?.log?.host?.default)default1 = option.log.host.default
-          default3 =
-        mode === 'HostBinaryFullpath' ? DefaultOption.log.host.bin
-          : mode === 'HostTextFullpath' ? DefaultOption.log.host.txt
-            : DefaultOption.log.default
-        }
-        if (option?.log?.default)default2 = option.log.default
-        return default1[prpty] || default2[prpty] || default3[prpty]
-      }
       let encording = ''
       const unit =
     mode === 'ClientBinaryFullpath' ? option.log.client.bin
@@ -137,7 +117,7 @@ export class LoggerOption {
             : null
       if (unit.encording) encording = unit.encording
       else {
-        encording = deffo('encording')
+        encording = deffo(mode, option, 'encording')
       }
       return encording
     }
