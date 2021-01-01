@@ -3,40 +3,35 @@ import * as t from 'teratermen'
 import * as path from 'path'
 import * as config from '../../server.conf.js'
 
-export const DefaultOption = {
-  log: {
-    default: {
-      dir: path.join(__dirname, '/../../log/'),
-      ext: 'log.txt',
-      name: Date.now().toString(),
-      encording: 'utf-8'
-    },
-    client: {
-      bin: {
-        dir: path.join(__dirname, '/../../log/'),
-        ext: 'bin.txt',
-        name: Date.now().toString() + '_{session}_client'
-      },
-      txt: {
-        dir: path.join(__dirname, '/../../log/'),
-        ext: 'txt',
-        name: Date.now().toString() + '_{session}_client'
-      }
-    },
-    host: {
-      bin: {
-        dir: path.join(__dirname, '/../../log/'),
-        ext: 'bin.txt',
-        name: Date.now().toString() + '_{session}_host'
-      },
-      txt: {
-        dir: path.join(__dirname, '/../../log/'),
-        ext: 'txt',
-        name: Date.now().toString() + '_{session}_host'
-      }
+export const DefaultOption = (()=>{
+  const now=Date.now().toString()
+  const dir =path.join(__dirname, '/../../log/')
+  function file(ext,mode?){
+    return {
+      dir: dir,
+      ext: ext,
+      name: now + (mode ? '_{session}_' + mode : '')
     }
   }
-}
+function log(mode){
+    return {
+      bin: file('bin.txt',mode),
+      txt: file('txt',mode),
+    }
+  }
+  const de=file('log.txt')
+  de['encordng']='utf-8'
+  const res={
+    log: {
+      default: de,
+      client: log('client'),
+      host: log('host')
+    }
+  }
+  return res
+})()
+
+
 export class LoggerOption {
   ClientBinaryFullpath
   ClientBinaryEncording
