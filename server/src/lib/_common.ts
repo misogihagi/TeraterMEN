@@ -2,24 +2,82 @@ import * as fs from 'fs'
 import * as t from 'teratermen'
 import * as path from 'path'
 import * as config from '../../server.conf.js'
-
-function deffo (mode, option, prpty:string) {
-  let default1 = {}
-  let default2 = {}
-  let default3 = {}
-  function defaultGen(destination, binfullpath,txtfullpath) {
-    if (mode === binfullpath || mode === txtfullpath) {
-      if (option?.log[destination].default)default1 = option.log[destination].default
-      default3 =
-      mode === binfullpath ? DefaultOption.log[destination].bin
-        : mode === txtfullpath ? DefaultOption.log[destination].txt
-          : DefaultOption.log.default
-    }      
+function mkdirIfnotexistSync(fullpath){
+  if(!fs.existsSync(fullpath))
+  fs.mkdirSync(fullpath, { recursive: true })
+}
+class Utils {
+  option
+  mode
+  constructor(option){
+    this.option=option
   }
-  defaultGen("client","ClientBinaryFullpath","ClientTextFullpath")
-  defaultGen("host","HostBinaryFullpath","HostTextFullpath")
-  if (option?.log?.default)default2 = option.log.default
-  return default1[prpty] || default2[prpty] || default3[prpty]
+  deffo (prpty:string) {
+    let default1 = {}
+    let default2 = {}
+    let default3 = {}
+    const mode=this.mode
+    const defaultGen=(destination, binfullpath,txtfullpath) =>{
+      if (mode === binfullpath || mode === txtfullpath) {
+        if (this.option?.log[destination].default)default1 = this.option.log[destination].default
+        default3 =
+        mode === binfullpath ? DefaultOption.log[destination].bin
+          : mode === txtfullpath ? DefaultOption.log[destination].txt
+            : DefaultOption.log.default
+      }      
+    }
+    defaultGen("client","ClientBinaryFullpath","ClientTextFullpath")
+    defaultGen("host","HostBinaryFullpath","HostTextFullpath")
+    if (this.option?.log?.default)default2 = this.option.log.default
+    return default1[prpty] || default2[prpty] || default3[prpty]
+  }  
+  unitGen(mode:string):t.unitOption {
+    const destination = mode.match(/^Client/) ? "client" : "host"
+    const format = mode.match("Binary") ? "bin" : "txt"
+    return this.option.log[destination][format]
+  }
+ noDefaultNamePathResolver(unit,dir):string{
+  if (unit.name) {
+    return path.join(dir, unit.name + '.' + this.deffo('ext'))
+  } else if (unit.ext) {
+    return path.join(dir, this.deffo('name') + '.' + unit.ext)
+  } else {
+    return path.join(dir, this.deffo('name') + '.' + this.deffo('ext'))
+  }     
+ }
+ namePathResolver(unit:t.unitOption,dir:string):string{
+  if (unit.ext && unit.name) {
+    return path.join(dir, unit.name + '.' + unit.ext)
+  } else if (unit.base) {
+    return path.join(dir, unit.base)
+  } else {
+    return this.noDefaultNamePathResolver(unit,dir)
+  }
+ }
+ pathResolver (mode:string) {
+    let fullpath = ''
+    this.mode=mode
+    const unit=this.unitGen(mode)
+    if (unit.path) fullpath = unit.path
+    else if (unit.dir || this.deffo('dir')) {
+      const dir = unit.dir || this.deffo('dir')
+      fullpath=this.namePathResolver(unit,dir)
+    }
+    mkdirIfnotexistSync(path.dirname(fullpath))
+    return fullpath
+  }
+
+  encordingResolver (mode:string) {
+    let encording = ''
+    this.mode=mode
+    const unit =this.unitGen(mode)
+    if (unit.encording) encording = unit.encording
+    else {
+      encording = this.deffo('encording')
+    }
+    return encording
+  }
+  
 }
 
 export const DefaultOption = (()=>{
@@ -65,64 +123,15 @@ export class LoggerOption {
     else {
       if (!option.log)option.log = DefaultOption.log
     }
-    function unitGen(mode:string):t.unitOption {
-      return mode === 'ClientBinaryFullpath' ? option.log.client.bin
-        : mode === 'ClientTextFullpath' ? option.log.client.txt
-          : mode === 'HostBinaryFullpath' ? option.log.host.bin
-            : mode === 'HostTextFullpath' ? option.log.host.txt
-              : null
-
-    }
-
-    function pathResolver (mode:string) {
-      let fullpath = ''
-      const unit=unitGen(mode)
-      if (unit.path) fullpath = unit.path
-      else if (unit.dir || deffo(mode, option, 'dir')) {
-        const dir = unit.dir || deffo(mode, option, 'dir')
-        if (unit.ext && unit.name) {
-          fullpath = path.join(dir, unit.name + '.' + unit.ext)
-        } else if (unit.base) {
-          fullpath = path.join(dir, unit.base)
-        } else {
-          if (unit.name) {
-            fullpath = path.join(dir, unit.name + '.' + deffo(mode, option, 'ext'))
-          } else if (unit.ext) {
-            fullpath = path.join(dir, deffo(mode, option, 'name') + '.' + unit.ext)
-          } else {
-            fullpath = path.join(dir, deffo(mode, option, 'name') + '.' + deffo(mode, option, 'ext'))
-          }
-        }
-      }
-
-      try {
-        fs.statSync(path.dirname(fullpath))
-      } catch (error) {
-        if (error.code === 'ENOENT') {
-          fs.mkdirSync(path.dirname(fullpath), { recursive: true })
-        } else {
-          throw error
-        }
-      }
-      return fullpath
-    }
-    function encordingResolver (mode:string) {
-      let encording = ''
-      const unit =unitGen(mode)
-      if (unit.encording) encording = unit.encording
-      else {
-        encording = deffo(mode, option, 'encording')
-      }
-      return encording
-    }
-    this.ClientBinaryFullpath = pathResolver('ClientBinaryFullpath')
-    this.ClientBinaryEncording = encordingResolver('ClientBinaryFullpath')
-    this.ClientTextFullpath = pathResolver('ClientTextFullpath')
-    this.ClientTextEncording = encordingResolver('ClientTextFullpath')
-    this.HostBinaryFullpath = pathResolver('HostBinaryFullpath')
-    this.HostBinaryEncording = encordingResolver('HostBinaryFullpath')
-    this.HostTextFullpath = pathResolver('HostTextFullpath')
-    this.HostTextEncording = encordingResolver('HostTextFullpath')
+    const utils= new Utils(option)
+    this.ClientBinaryFullpath = utils.pathResolver('ClientBinaryFullpath')
+    this.ClientBinaryEncording = utils.encordingResolver('ClientBinaryFullpath')
+    this.ClientTextFullpath = utils.pathResolver('ClientTextFullpath')
+    this.ClientTextEncording = utils.encordingResolver('ClientTextFullpath')
+    this.HostBinaryFullpath = utils.pathResolver('HostBinaryFullpath')
+    this.HostBinaryEncording = utils.encordingResolver('HostBinaryFullpath')
+    this.HostTextFullpath = utils.pathResolver('HostTextFullpath')
+    this.HostTextEncording = utils.encordingResolver('HostTextFullpath')
   }
 }
 export class Logger {
