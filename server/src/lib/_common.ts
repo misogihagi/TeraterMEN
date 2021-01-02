@@ -164,12 +164,17 @@ export class Logger {
     this.client = createLogStream("client")
     this.host = createLogStream("host")
   }
-
+  binwrite(bin:fs.WriteStream,buf){
+    const str = typeof buf === 'string' ? buf : buf.toString()
+    bin.write(Array.from(buf).join(' ') + '\n')
+  }
+  txtwrite(txt:fs.WriteStream,str:string){
+    txt.write(str)
+  }
   write (buf, option) {
     const mainWrite=target => {
-      const str = typeof buf === 'string' ? buf : buf.toString()
-      if (target.bin) target.bin.write(Array.from(buf).join(' ') + '\n')
-      if (target.txt) target.txt.write(str)
+      this.binwrite(target.bin,buf)
+      this.txtwrite(target.txt,buf)
     }
     if (option === 'input' && this.client) {
       mainWrite(this.client)
