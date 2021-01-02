@@ -7,7 +7,7 @@ import { FitAddon } from 'xterm-addon-fit';
 
 import { onMount } from 'svelte';
 
-import * as adapter from 'moduleadapter'
+import * as adapter from 'moduleadapter';
 import { key2buf } from './key2buf';
 import { str2buf } from './str2buf';
 
@@ -27,12 +27,12 @@ const term = new Terminal();
 const fitAddon = new FitAddon();
 term.loadAddon(fitAddon);
 
-const join = config=>{
+const join = (config) => {
 	adapter.emit('join', {
 		id: session,
-		config: config,
+		config,
 	});
-}
+};
 const store = localStorage.getItem('store') ? JSON.parse(localStorage.getItem('store')) : {};
 let session = '';
 adapter.once('connect', () => {
@@ -43,7 +43,7 @@ adapter.once('connect', () => {
 		}
 	});
 	if (!session) session = adapter.id;
-	if (hostConfig.hostname) join(hostConfig)
+	if (hostConfig.hostname) join(hostConfig);
 });
 adapter.once('join', (msg) => {
 	if (msg === 'reconnect') {
@@ -66,7 +66,7 @@ adapter.on('relay', (msg) => {
 term.onKey((e) => {
 	adapter.emit('relay', {
 		id: session,
-		buf: key2buf(e.domEvent,term._core._coreService.decPrivateModes),
+		buf: key2buf(e.domEvent, term._core._coreService.decPrivateModes),
 	});
 });
 
@@ -74,8 +74,8 @@ onMount(() => {
 	document.getElementById('hash').addEventListener('change', (e) => {
 		hostConfig = URI(e.target.value)._parts;
 
-		if (hostConfig.hostname){
-			join(hostConfig)
+		if (hostConfig.hostname) {
+			join(hostConfig);
 			localStorage.setItem('store', JSON.stringify(store));
 			document.location.hash = e.target.value;
 		}
@@ -112,9 +112,9 @@ onMount(() => {
 		overlay.style.height = xscreen.style.height;
 	})(document.getElementById('overlay'), document.querySelector('.xterm-screen'));
 });
-function buyby(e){
-	join(e.detail)
-	console.log(e.detail)
+function buyby(e) {
+	join(e.detail);
+	console.log(e.detail);
 }
 </script>
 <Ttmendlg on:hostdeal={buyby}></Ttmendlg>
