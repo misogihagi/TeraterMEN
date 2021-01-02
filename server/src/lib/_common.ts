@@ -34,18 +34,21 @@ class Utils {
   }
 
  namePathResolver(unit:t.unitOption,dir:string):string{
-  if (unit.ext && unit.name) {
-    return path.join(dir, unit.name + '.' + unit.ext)
-  } else if (unit.base) {
-    return path.join(dir, unit.base)
-  } else {
+   const noDefault=():string =>{
     if (unit.name) {
       return path.join(dir, unit.name + '.' + this.deffo('ext'))
     } else if (unit.ext) {
       return path.join(dir, this.deffo('name') + '.' + unit.ext)
     } else {
       return path.join(dir, this.deffo('name') + '.' + this.deffo('ext'))
-    }
+    }     
+   }
+  if (unit.ext && unit.name) {
+    return path.join(dir, unit.name + '.' + unit.ext)
+  } else if (unit.base) {
+    return path.join(dir, unit.base)
+  } else {
+    return noDefault()
   }
  }
  pathResolver (mode:string) {
