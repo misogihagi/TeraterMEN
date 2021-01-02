@@ -2,6 +2,10 @@ import * as fs from 'fs'
 import * as t from 'teratermen'
 import * as path from 'path'
 import * as config from '../../server.conf.js'
+function mkdirIfnotexistSync(fullpath){
+  if(!fs.existsSync(fullpath))
+  fs.mkdirSync(fullpath, { recursive: true })
+}
 class Utils {
   option
   mode
@@ -32,23 +36,22 @@ class Utils {
     const format = mode.match("Binary") ? "bin" : "txt"
     return this.option.log[destination][format]
   }
-
+ noDefaultNamePathResolver(unit,dir):string{
+  if (unit.name) {
+    return path.join(dir, unit.name + '.' + this.deffo('ext'))
+  } else if (unit.ext) {
+    return path.join(dir, this.deffo('name') + '.' + unit.ext)
+  } else {
+    return path.join(dir, this.deffo('name') + '.' + this.deffo('ext'))
+  }     
+ }
  namePathResolver(unit:t.unitOption,dir:string):string{
-   const noDefault=():string =>{
-    if (unit.name) {
-      return path.join(dir, unit.name + '.' + this.deffo('ext'))
-    } else if (unit.ext) {
-      return path.join(dir, this.deffo('name') + '.' + unit.ext)
-    } else {
-      return path.join(dir, this.deffo('name') + '.' + this.deffo('ext'))
-    }     
-   }
   if (unit.ext && unit.name) {
     return path.join(dir, unit.name + '.' + unit.ext)
   } else if (unit.base) {
     return path.join(dir, unit.base)
   } else {
-    return noDefault()
+    return this.noDefaultNamePathResolver(unit,dir)
   }
  }
  pathResolver (mode:string) {
@@ -60,16 +63,7 @@ class Utils {
       const dir = unit.dir || this.deffo('dir')
       fullpath=this.namePathResolver(unit,dir)
     }
-  
-    try {
-      fs.statSync(path.dirname(fullpath))
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        fs.mkdirSync(path.dirname(fullpath), { recursive: true })
-      } else {
-        throw error
-      }
-    }
+    mkdirIfnotexistSync(path.dirname(fullpath))
     return fullpath
   }
 
