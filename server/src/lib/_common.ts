@@ -27,27 +27,16 @@ class Utils {
     if (this.option?.log?.default)default2 = this.option.log.default
     return default1[prpty] || default2[prpty] || default3[prpty]
   }  
-  unitGen(mode:string):t.unitOption | null {
-    if(mode.match(/^Client/)){
-      return mode === 'ClientBinaryFullpath' ? this.option.log.client.bin
-      : mode === 'ClientTextFullpath' ? this.option.log.client.txt
-      : null 
-    }
-    else if(mode.match(/^Host/)){
-      return mode === 'HostBinaryFullpath' ? this.option.log.host.bin
-      : mode === 'HostTextFullpath' ? this.option.log.host.txt
-      : null
-    }
-    else {
-      return null
-    }
+  unitGen(mode:string):t.unitOption {
+    const destination = mode.match(/^Client/) ? "client" : "host"
+    const format = mode.match("Binary") ? "bin" : "txt"
+    return this.option.log[destination][format]
   }
 
  pathResolver (mode:string) {
     let fullpath = ''
     this.mode=mode
     const unit=this.unitGen(mode)
-    if(!unit)return ''
     if (unit.path) fullpath = unit.path
     else if (unit.dir || this.deffo('dir')) {
       const dir = unit.dir || this.deffo('dir')
@@ -82,7 +71,7 @@ class Utils {
     let encording = ''
     this.mode=mode
     const unit =this.unitGen(mode)
-    if (unit?.encording) encording = unit.encording
+    if (unit.encording) encording = unit.encording
     else {
       encording = this.deffo('encording')
     }
