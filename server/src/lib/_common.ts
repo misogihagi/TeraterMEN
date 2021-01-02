@@ -65,16 +65,18 @@ export class LoggerOption {
     else {
       if (!option.log)option.log = DefaultOption.log
     }
-
-    function pathResolver (mode:string) {
-      let fullpath = ''
-      const unit:t.unitOption =
-      mode === 'ClientBinaryFullpath' ? option.log.client.bin
+    function unitGen(mode:string):t.unitOption {
+      return mode === 'ClientBinaryFullpath' ? option.log.client.bin
         : mode === 'ClientTextFullpath' ? option.log.client.txt
           : mode === 'HostBinaryFullpath' ? option.log.host.bin
             : mode === 'HostTextFullpath' ? option.log.host.txt
               : null
 
+    }
+
+    function pathResolver (mode:string) {
+      let fullpath = ''
+      const unit=unitGen(mode)
       if (unit.path) fullpath = unit.path
       else if (unit.dir || deffo(mode, option, 'dir')) {
         const dir = unit.dir || deffo(mode, option, 'dir')
@@ -106,12 +108,7 @@ export class LoggerOption {
     }
     function encordingResolver (mode:string) {
       let encording = ''
-      const unit =
-    mode === 'ClientBinaryFullpath' ? option.log.client.bin
-      : mode === 'ClientTextFullpath' ? option.log.client.txt
-        : mode === 'HostBinaryFullpath' ? option.log.host.bin
-          : mode === 'HostTextFullpath' ? option.log.host.txt
-            : null
+      const unit =unitGen(mode)
       if (unit.encording) encording = unit.encording
       else {
         encording = deffo(mode, option, 'encording')
