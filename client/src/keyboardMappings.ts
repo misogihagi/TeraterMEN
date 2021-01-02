@@ -3,11 +3,11 @@
  * Copyright (c) 2012-2013, Christopher Jeffrey (MIT License)
  * @license MIT
  */
-export const enum KeyboardResultType {
-	SEND_KEY,
-	SELECT_ALL,
-	PAGE_UP,
-	PAGE_DOWN
+export const KeyboardResultType = {
+	SEND_KEY: 0,
+	SELECT_ALL: 1,
+	PAGE_UP: 2,
+	PAGE_DOWN: 3
 }
 export namespace C0 {
 	/** Null (Caret = ^@, C = \0) */
