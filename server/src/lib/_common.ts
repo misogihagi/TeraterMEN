@@ -7,20 +7,17 @@ function deffo (mode, option, prpty:string) {
   let default1 = {}
   let default2 = {}
   let default3 = {}
-  if (mode === 'ClientBinaryFullpath' || mode === 'ClientTextFullpath') {
-    if (option?.log?.client?.default)default1 = option.log.client.default
-    default3 =
-    mode === 'ClientBinaryFullpath' ? DefaultOption.log.client.bin
-      : mode === 'ClientTextFullpath' ? DefaultOption.log.client.txt
-        : DefaultOption.log.default
+  function defaultGen(destination, binfullpath,txtfullpath) {
+    if (mode === binfullpath || mode === txtfullpath) {
+      if (option?.log[destination].default)default1 = option.log[destination].default
+      default3 =
+      mode === binfullpath ? DefaultOption.log[destination].bin
+        : mode === txtfullpath ? DefaultOption.log[destination].txt
+          : DefaultOption.log.default
+    }      
   }
-  if (mode === 'HostBinaryFullpath' || mode === 'HostTextFullpath') {
-    if (option?.log?.host?.default)default1 = option.log.host.default
-    default3 =
-    mode === 'HostBinaryFullpath' ? DefaultOption.log.host.bin
-      : mode === 'HostTextFullpath' ? DefaultOption.log.host.txt
-        : DefaultOption.log.default
-  }
+  defaultGen("client","ClientBinaryFullpath","ClientTextFullpath")
+  defaultGen("host","HostBinaryFullpath","HostTextFullpath")
   if (option?.log?.default)default2 = option.log.default
   return default1[prpty] || default2[prpty] || default3[prpty]
 }
