@@ -33,6 +33,21 @@ class Utils {
     return this.option.log[destination][format]
   }
 
+ namePathResolver(unit:t.unitOption,dir:string):string{
+  if (unit.ext && unit.name) {
+    return path.join(dir, unit.name + '.' + unit.ext)
+  } else if (unit.base) {
+    return path.join(dir, unit.base)
+  } else {
+    if (unit.name) {
+      return path.join(dir, unit.name + '.' + this.deffo('ext'))
+    } else if (unit.ext) {
+      return path.join(dir, this.deffo('name') + '.' + unit.ext)
+    } else {
+      return path.join(dir, this.deffo('name') + '.' + this.deffo('ext'))
+    }
+  }
+ }
  pathResolver (mode:string) {
     let fullpath = ''
     this.mode=mode
@@ -40,19 +55,7 @@ class Utils {
     if (unit.path) fullpath = unit.path
     else if (unit.dir || this.deffo('dir')) {
       const dir = unit.dir || this.deffo('dir')
-      if (unit.ext && unit.name) {
-        fullpath = path.join(dir, unit.name + '.' + unit.ext)
-      } else if (unit.base) {
-        fullpath = path.join(dir, unit.base)
-      } else {
-        if (unit.name) {
-          fullpath = path.join(dir, unit.name + '.' + this.deffo('ext'))
-        } else if (unit.ext) {
-          fullpath = path.join(dir, this.deffo('name') + '.' + unit.ext)
-        } else {
-          fullpath = path.join(dir, this.deffo('name') + '.' + this.deffo('ext'))
-        }
-      }
+      fullpath=this.namePathResolver(unit,dir)
     }
   
     try {
