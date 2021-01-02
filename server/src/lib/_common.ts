@@ -134,14 +134,14 @@ export class LoggerOption {
     this.HostTextEncording = utils.encordingResolver('HostTextFullpath')
   }
 }
+function pathReplacer (path:string,session) {
+  return path.replace(/{session}/g, session)
+}
 export class Logger {
   client:t.Log
   host:t.Log
   loggerOption:LoggerOption
   createLogStream(mode:string,session):t.Log{
-    function pathReplacer (path:string,session) {
-      return path.replace(/{session}/g, session)
-    }
     const binfullpath = mode === "client" ? this.loggerOption.ClientBinaryFullpath : this.loggerOption.HostBinaryFullpath
     const txtfullpath = mode === "client" ? this.loggerOption.ClientTextFullpath : this.loggerOption.HostTextFullpath
     const binencording=  mode === "client" ? this.loggerOption.ClientBinaryEncording : this.loggerOption.HostBinaryEncording
