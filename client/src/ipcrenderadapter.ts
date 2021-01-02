@@ -1,4 +1,6 @@
-const { ipcRenderer } = window;
+import {
+	ipcRenderer 
+  } from 'electron'
 export let id;
 ipcRenderer.invoke('connect').then((result) => {
 	id = result;

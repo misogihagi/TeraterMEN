@@ -100,7 +100,7 @@ export const DefaultOption = (() => {
     }
   }
   const de = file('log.txt')
-  de.encordng = 'utf-8'
+  de["encording"] = 'utf-8'
   const res = {
     log: {
       default: de,
