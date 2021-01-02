@@ -134,35 +134,37 @@ export class LoggerOption {
     this.HostTextEncording = utils.encordingResolver('HostTextFullpath')
   }
 }
+function createStream(fullpath, encording,session){
+  function pathReplacer (path:string,session) {
+    return path.replace(/{session}/g, session)
+  }
+    return fullpath === null
+    ? null : fs.createWriteStream(
+      pathReplacer(fullpath,session),
+      encording
+    )
+}
+
 export class Logger {
   client:t.Log
   host:t.Log
   loggerOption:LoggerOption
+  createLogStream(mode:string,session):t.Log{
+    const binfullpath = mode === "client" ? this.loggerOption.ClientBinaryFullpath : this.loggerOption.HostBinaryFullpath
+    const txtfullpath = mode === "client" ? this.loggerOption.ClientTextFullpath : this.loggerOption.HostTextFullpath
+    const binencording=  mode === "client" ? this.loggerOption.ClientBinaryEncording : this.loggerOption.HostBinaryEncording
+    const txtencording=  mode === "client" ? this.loggerOption.ClientTextEncording : this.loggerOption.HostTextEncording
+    return {
+      bin: createStream(binfullpath, binencording,session),
+      txt: createStream(txtfullpath, txtencording,session),
+    }
+  }
   constructor (session) {
-    function pathReplacer (path:string) {
-      return path.replace(/{session}/g, session)
-    }
     type mode="client" | "host"
-    const createLogStream = (mode:mode):t.Log=>{
-      const binfullpath = mode === "client" ? this.loggerOption.ClientBinaryFullpath : this.loggerOption.HostBinaryFullpath
-      const txtfullpath = mode === "client" ? this.loggerOption.ClientTextFullpath : this.loggerOption.HostTextFullpath
-      const binencording=  mode === "client" ? this.loggerOption.ClientBinaryEncording : this.loggerOption.HostBinaryEncording
-      const txtencording=  mode === "client" ? this.loggerOption.ClientTextEncording : this.loggerOption.HostTextEncording
-      function createStream(fullpath, encording){
-        return fullpath === null
-          ? null : fs.createWriteStream(
-            pathReplacer(fullpath),
-            encording
-          )
-      }
-      return {
-        bin: createStream(binfullpath, binencording),
-        txt: createStream(txtfullpath, txtencording),
-      }
-    }
+    const createLogStream = 
     this.loggerOption = new LoggerOption(config)
-    this.client = createLogStream("client")
-    this.host = createLogStream("host")
+    this.client = this.createLogStream("client",session)
+    this.host = this.createLogStream("host",session)
   }
   binwrite(bin:fs.WriteStream,buf){
     const str = typeof buf === 'string' ? buf : buf.toString()
