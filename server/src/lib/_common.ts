@@ -134,9 +134,17 @@ export class LoggerOption {
     this.HostTextEncording = utils.encordingResolver('HostTextFullpath')
   }
 }
-function pathReplacer (path:string,session) {
-  return path.replace(/{session}/g, session)
+function createStream(fullpath, encording,session){
+  function pathReplacer (path:string,session) {
+    return path.replace(/{session}/g, session)
+  }
+    return fullpath === null
+    ? null : fs.createWriteStream(
+      pathReplacer(fullpath,session),
+      encording
+    )
 }
+
 export class Logger {
   client:t.Log
   host:t.Log
@@ -146,16 +154,9 @@ export class Logger {
     const txtfullpath = mode === "client" ? this.loggerOption.ClientTextFullpath : this.loggerOption.HostTextFullpath
     const binencording=  mode === "client" ? this.loggerOption.ClientBinaryEncording : this.loggerOption.HostBinaryEncording
     const txtencording=  mode === "client" ? this.loggerOption.ClientTextEncording : this.loggerOption.HostTextEncording
-    function createStream(fullpath, encording){
-      return fullpath === null
-        ? null : fs.createWriteStream(
-          pathReplacer(fullpath,session),
-          encording
-        )
-    }
     return {
-      bin: createStream(binfullpath, binencording),
-      txt: createStream(txtfullpath, txtencording),
+      bin: createStream(binfullpath, binencording,session),
+      txt: createStream(txtfullpath, txtencording,session),
     }
   }
   constructor (session) {
