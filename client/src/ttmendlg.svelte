@@ -1,5 +1,5 @@
-<div id="tcip" style="display:flex;border:1px solid">
-    <div id="tcpip" style="flex: 1;">tcpip 
+<div id="tcpip" style="display:flex;border:1px solid" on:change={tcpipChange}>
+    <div style="flex: 1;">tcpip 
       <input type="radio" bind:group={suite} value={'tcpip'}>
     </div>
     <div style="flex: 5;">
@@ -38,10 +38,10 @@
               </select>
             </div>
             <div>username
-              <input value={username}>
+              <input bind:value={username}>
             </div>
             <div>password
-              <input value={password}>
+              <input bind:value={password}>
             </div>
             <div>privateKey
               <input type="file" name="" on:change={file2text}>
@@ -63,18 +63,23 @@
   <div><input type="button" name="OK" value="OK" on:click={hostdealer}>
   </div>
   <script>
-	import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
+  import {hostURI} from './store'
 
 	const dispatch = createEventDispatcher();
 let suite = 'tcpip';
 let protocol = 'ssh';
 let hostname = '';
+function tcpipChange(e){
+  console.log(protocol,hostname,port,username,password,privateKey)
+  hostURI.set(protocol +'://'+username+'@'+hostname+':'+port)
+}
 function hostchange(e) { // svelteのバグでバインドされないため
 		hostname = e.target.value;
 }
 let port = 22;
-const username = '';
-const password = '';
+let username = '';
+let password = '';
 let privateKey = '';
 
 function file2text(e) {

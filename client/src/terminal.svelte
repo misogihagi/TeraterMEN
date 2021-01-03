@@ -11,6 +11,7 @@ import * as adapter from 'moduleadapter';
 import { key2buf } from './key2buf';
 import { str2buf } from './str2buf';
 
+import {hostURI} from './store'
 import Ttmendlg from './Ttmendlg.svelte';
 
 const loadingfilecount = 12;
@@ -21,6 +22,8 @@ fileref.setAttribute('rel', 'stylesheet');
 fileref.setAttribute('type', 'text/css');
 fileref.setAttribute('href', cssfile);
 document.getElementsByTagName('head')[0].appendChild(fileref);
+
+hostURI.set(document.location.hash.slice(1))
 
 let hostConfig = URI(document.location.hash.slice(1))._parts;
 const term = new Terminal();
@@ -35,6 +38,7 @@ const join = (config) => {
 };
 const store = localStorage.getItem('store') ? JSON.parse(localStorage.getItem('store')) : {};
 let session = '';
+let hashURI=''
 adapter.once('connect', () => {
 	document.getElementById('overlay').classList.add('overlay-on');
 	Object.keys(store).forEach((key) => {
@@ -71,6 +75,9 @@ term.onKey((e) => {
 });
 
 onMount(() => {
+	hostURI.subscribe(v=>{
+		hashURI=v
+	})
 	document.getElementById('hash').addEventListener('change', (e) => {
 		hostConfig = URI(e.target.value)._parts;
 
@@ -119,7 +126,7 @@ function buyby(e) {
 </script>
 <Ttmendlg on:hostdeal={buyby}></Ttmendlg>
 <main>
-	<input id="hash">
+	<input id="hash" bind:value={hashURI}>
 	<div id="wrapper">
 		<div id="overlay" class="overlay overlay-on"><div class="load-container"><div class="load"><div class="loader">Loading...</div></div></div></div>
 		<div id="terminal"></div>
