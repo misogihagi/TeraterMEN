@@ -3,9 +3,8 @@ const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  mode: proccess.env === 'prodction' ?'prodction' : 'development'
-  entry: './dist/electron.js',
-  externals: [nodeExternals()],
+  mode: process.env === 'prodction' ? 'prodction' : 'development' ,
+  entry: path.resolve(__dirname, 'dist','electron.js'),
   module: {
     rules: [],
   },
@@ -14,7 +13,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
    plugins: [] ,
-  target: 'node',
+  target: 'electron-main',
   node: {
     __dirname: false,
     __filename: false

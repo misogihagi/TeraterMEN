@@ -7,6 +7,10 @@ const ts = require("gulp-typescript");
 const clientTsProject = ts.createProject('./client/tsconfig.json');
 const serverTsProject = ts.createProject('./server/tsconfig.json');
 const eslint = require('gulp-eslint');
+const webpackStream = require("webpack-stream");
+const webpack = require("webpack");
+const webpackConfig = require("./server/webpack.config");
+const electronBuilder = require('electron-builder');
 
 require('dotenv').config()
 Array.from(['env','platform']).forEach((v,i) => {
@@ -102,10 +106,16 @@ gulp.task('build',
         'build:server'
     )
 );
+
 gulp.task('build:electron',
     gulp.series(
       'build',
-      (done)=>{return electronBuilder({
+      (done)=>{
+        return webpackStream(webpackConfig, webpack)
+         .pipe(gulp.dest("server/dist"));
+      },
+      (done)=>{
+      electronBuilder.build({
         config: {
             'appId': 'teratermen',
             'asar':false,
@@ -119,7 +129,9 @@ gulp.task('build:electron',
                 }
             }
         }
-      })}
+      })
+      done()
+      }
     )
 );
 gulp.task('lint',
