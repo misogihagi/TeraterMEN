@@ -6,6 +6,7 @@ const { exec } = require('child_process');
 const ts = require("gulp-typescript");
 const clientTsProject = ts.createProject('./client/tsconfig.json');
 const serverTsProject = ts.createProject('./server/tsconfig.json');
+const mocha = require('gulp-ts-mocha');
 const eslint = require('gulp-eslint');
 const webpackStream = require("webpack-stream");
 const webpack = require("webpack");
@@ -82,12 +83,22 @@ gulp.task('lint:client:fix', () => {
 gulp.task('lint:server:fix', () => {
     return gulp.src(['server/src/**/*.ts'])
         .pipe(eslint({ useEslintrc: true }))
-        .pipe(eslint({fix:true}))
+	        .pipe(eslint({fix:true}))
         .pipe(eslint.format())
         .pipe(gulpIf(f=>{return f.eslint && f.eslint.fixed},
           gulp.dest('server/src/')))
         .pipe(eslint.failAfterError());
 });
+
+gulp.task('test:client', () => {
+    return gulp.src('client/test/*.ts', {read: false})
+      .pipe(mocha({project: 'client/tsconfig.json'}))
+});
+gulp.task('test:server', () => {
+    return gulp.src('server/test/*.ts', {read: false})
+      .pipe(mocha({project: 'server/tsconfig.json'}))
+});
+
 gulp.task('watch:client', () => {
   const watcher = gulp.watch('client/src/*.*', gulp.parallel('build:client'));
   watcher.on('change', function(event) {
@@ -127,7 +138,10 @@ gulp.task('build:electron',
                         'ia32',
                     ]
                 }
-            }
+            },
+            "extraMetadata": {
+                "main": "./server/dist/electron.webpack.js"
+            },
         }
       })
       done()
@@ -138,6 +152,12 @@ gulp.task('lint',
     gulp.parallel(
         'lint:client',
         'lint:server'
+    )
+);
+gulp.task('test',
+    gulp.parallel(
+        'test:client',
+        'test:server'
     )
 );
 gulp.task('watch',

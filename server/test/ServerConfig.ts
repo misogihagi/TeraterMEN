@@ -1,7 +1,5 @@
-const { execSync } = require('child_process')
+const target=require( '../dist/lib/_common')
 
-const stdout = execSync('npx tsc --project tsconfig.json')
-const a=require( '../dist/lib/_common')
 const config1={
     log:{
       default:{},
@@ -66,7 +64,7 @@ const assert = require('assert');
 const fs = require('fs')
 describe('config', () => {
   it('config1', () => {
-    const logger=new a.LoggerOption(config1)
+    const logger=new target.LoggerOption(config1)
     assert.equal(logger.ClientBinaryFullpath,'./c.txt');
     assert.equal(logger.ClientTextFullpath,'clidir\\bin.txt.bin.txt');
     assert.equal(logger.HostBinaryFullpath,'log\\asd\\bin.txt.bin.txt');
@@ -75,7 +73,7 @@ describe('config', () => {
 //    assert.equal(logger.HostTextFullpath,'..\\..\\log\\1598418438536_{session}_host.txt');
   });
   it('config2', () => {
-    const logger=new a.LoggerOption(config2)
+    const logger=new target.LoggerOption(config2)
     assert.equal(logger.ClientBinaryFullpath,'./c.txt');
     assert.equal(logger.ClientTextFullpath,'clidir\\bin.txt.bin.txt');
     assert.equal(logger.HostBinaryFullpath,'log\\asd\\bin.txt.bin.txt');

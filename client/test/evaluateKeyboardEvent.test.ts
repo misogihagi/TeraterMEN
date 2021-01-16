@@ -1,6 +1,5 @@
 
 import { assert } from 'chai';
-import { describe, it } from "mocha";
 import { evaluateKeyboardEvent } from '../src/evaluateKeyboardEvent';
 import type { IKeyboardResult, IKeyboardEvent } from 'teratermen';
 
