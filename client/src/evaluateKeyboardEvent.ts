@@ -45,7 +45,7 @@ export function evaluateKeyboardEvent(
 					: arrow === 'down' ? 'B' : '';
 		if (leftRightOrUpDown === 'leftRight') {
 			if (isMac) {
-				result.key = C0.ESC + arrow === 'left' ? 'b' : 'f';
+				result.key = C0.ESC + (arrow === 'left' ? 'b' : 'f');
 			} else {
 				result.key = `${C0.ESC}[1;5${ABCD}`;
 			}
@@ -56,8 +56,8 @@ export function evaluateKeyboardEvent(
 		}
 	}
 	function f1tof12(keyCode:number, modifiers:number) {
-		if (modifiers) return functionKeyMap[`${keyCode}`].leftValue + (modifiers + 1) + functionKeyMap[keyCode].rightValue;
-		return functionKeyMap[`${keyCode}`].noModifiers;
+		if (modifiers) return C0.ESC+functionKeyMap[`${keyCode}`].leftValue + (modifiers + 1) + functionKeyMap[keyCode].rightValue;
+		return C0.ESC+functionKeyMap[`${keyCode}`].noModifiers;
 	}
 	function normalSequence(result) {
 		if (ev.keyCode >= 65 && ev.keyCode <= 90) {
