@@ -1,4 +1,5 @@
 const target=require( '../dist/lib/_common')
+const path=require('path')
 
 const config1={
     log:{
@@ -66,17 +67,17 @@ describe('config', () => {
   it('config1', () => {
     const logger=new target.LoggerOption(config1)
     assert.equal(logger.ClientBinaryFullpath,'./c.txt');
-    assert.equal(logger.ClientTextFullpath,'clidir\\bin.txt.bin.txt');
-    assert.equal(logger.HostBinaryFullpath,'log\\asd\\bin.txt.bin.txt');
+    assert.equal(logger.ClientTextFullpath, path.join('clidir','bin.txt.bin.txt'));
+    assert.equal(logger.HostBinaryFullpath,path.join('log','asd','bin.txt.bin.txt'));
     fs.rmdirSync('clidir')
     fs.rmdirSync('log', { recursive: true })
-//    assert.equal(logger.HostTextFullpath,'..\\..\\log\\1598418438536_{session}_host.txt');
+//    assert.equal(logger.HostTextFullpath,path.join('..','..','log','1598418438536_{session}_host.txt');
   });
   it('config2', () => {
     const logger=new target.LoggerOption(config2)
     assert.equal(logger.ClientBinaryFullpath,'./c.txt');
-    assert.equal(logger.ClientTextFullpath,'clidir\\bin.txt.bin.txt');
-    assert.equal(logger.HostBinaryFullpath,'log\\asd\\bin.txt.bin.txt');
+    assert.equal(logger.ClientTextFullpath,path.join('clidir', 'bin.txt.bin.txt'));
+    assert.equal(logger.HostBinaryFullpath,path.join('log', 'asd','bin.txt.bin.txt'));
     fs.rmdirSync('clidir')
     fs.rmdirSync('log', { recursive: true })
 //    assert.equal(logger.HostTextFullpath,'clidir\\1598426159576_{session}_host.bin.txt');

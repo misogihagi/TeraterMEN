@@ -12,7 +12,7 @@ import { key2buf } from './key2buf';
 import { str2buf } from './str2buf';
 
 import {hostURI} from './store'
-import Ttmendlg from './Ttmendlg.svelte';
+import Ttmendlg from './ttmendlg.svelte';
 
 const loadingfilecount = 12;
 
