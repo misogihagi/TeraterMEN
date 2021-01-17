@@ -38,16 +38,22 @@ const [env,platform]=process.argv.slice(3).reduce(
     return process.env[i]
 })
 
-gulp.task("install", (done) => {
-  exec('cd client && npm install' , function (err, stdout, stderr) {
-    if(err)console.log(err);
-    done()
-  });
-  exec('cd server && npm install' , function (err, stdout, stderr) {
-    if(err)console.log(err);
-    done()
-  });
-});
+gulp.task("install", 
+    gulp.parallel(
+        (done) => {
+            exec('cd client && npm install' , function (err, stdout, stderr) {
+              if(err)console.log(err);
+              done()
+            })
+         },
+        (done) => {
+            exec('cd server && npm install' , function (err, stdout, stderr) {
+              if(err)console.log(err);
+              done()
+            })
+         }
+    )
+);
 gulp.task("build:client", (done) => {
   exec('cd client && npm run build' , function (err, stdout, stderr) {
     if(err)console.log(err);
@@ -160,9 +166,10 @@ gulp.task('pack',
     )
 );
 gulp.task('test',
-    gulp.parallel(
-        'test:client',
-        'test:server'
+    gulp.series(
+      'build',
+      'test:client',
+      'test:server'
     )
 );
 gulp.task('watch',
