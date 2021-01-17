@@ -9,7 +9,7 @@
     "build": "gulp build",
     "test": "gulp test",
     "electron": "electron ./server/dist/electron.js",
-    "pack": "electron-packager ./",
+    "pack": "gulp pack",
     "start": "gulp start",
     "watch": "gulp watch"
   },

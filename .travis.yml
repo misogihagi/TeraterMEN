@@ -1,0 +1,24 @@
+language: "node_js"
+node_js: "14.15.4"
+branches:
+    only:
+        - "master"
+        - "main"
+    except:
+        - "dev"
+before_script:
+    - "npm i"
+script:
+    - "npm run test"
+before_deploy:
+    - "npm run pack"
+deploy:
+    provider: "releases"
+    api_key:
+       secure: "wQGTzMUsIL9wLCT9xQlqEwk+2y248jS0S+RftVMc0larbx/bdGTcIZLCVYV4SkuErhRxBr0sersC6u98oOr7kGk+praNw2qvqfL7senN7dBfWX6plhyNtPtiTHhBo8dVbHKlh4RED2AIjIGbxKh/Y+JmAysrf+IIBy9TgZZhclCJdNhsXTspW6CZabPp+UQrfmQhuof1E1xFboHv7VKBWq3Ypx01VNMuuZYjDMgu7i12lR2ATOLTJgaxrmufzj7wit5tdGZ1RKSnk87uIW2Q5x31zrP6tDa5Rbr7zzNoBEw2RMEiYMLJfHsJRYbgj0IkhL/MKKA06ddexbW9Z9fDoBz9GI90zmxpGN/IpiqEQgPvABRmYYkBPSltcFzuKPqyai1kQ3NkucKBdq3UYew60U+YgO8PQ0VeP2QT1qOlmirdN08RBWFcR9fHhtCZsG5NT6sRpUNxlrZjfUxpLqWvUA0ZjRbxZ5eorAzqyfdZfg7W2LKm/ffXd38LgT0gcMDQ+ZEp/mRykDt6bLNBX6hq+zox+ilZEU/64DdELD4RkDPqwEI+UsXJozhXv/lDQvEVWY/52XzIjsOIyG2FAC29D71n5BaWx433GVzrnl4yofUU3u+nRYbLPsS1U9VK/Et0pu+Aunq1UTmOe7pkbGSrTSBCKzGzadyy12K3/GIiOCI="
+    file:
+        - "teratermen-1.0.1-win.zip"
+    skip_cleanup: true
+    on:
+        tags: true
+        repo: "${TRAVIS_REPO_SLUG}"

@@ -154,6 +154,11 @@ gulp.task('lint',
         'lint:server'
     )
 );
+gulp.task('pack',
+    gulp.parallel(
+        'build:electron'
+    )
+);
 gulp.task('test',
     gulp.parallel(
         'test:client',
