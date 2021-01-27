@@ -40,7 +40,8 @@ const store = localStorage.getItem('store') ? JSON.parse(localStorage.getItem('s
 let session = '';
 let hashURI=''
 adapter.once('connect', () => {
-	document.getElementById('overlay').classList.add('overlay-on');
+	document.getElementById('loadOverlay').classList.remove('overlay-on');
+	ttmendlgActive=true
 	Object.keys(store).forEach((key) => {
 		if (store[key] === document.location.hash.slice(1)) {
 			session = key;
@@ -51,11 +52,11 @@ adapter.once('connect', () => {
 });
 adapter.once('join', (msg) => {
 	if (msg === 'reconnect') {
-		document.getElementById('overlay').classList.remove('overlay-on');
+		document.getElementById('loadOverlay').classList.remove('overlay-on');
 		store[session] = document.location.hash.slice(1);
 		localStorage.setItem('store', JSON.stringify(store));
 	} else if (msg === 'connect') {
-		document.getElementById('overlay').classList.remove('overlay-on');
+		document.getElementById('loadOverlay').classList.remove('overlay-on');
 		delete store[session];
 		session = adapter.id;
 		store[adapter.id] = document.location.hash.slice(1);
@@ -115,20 +116,39 @@ onMount(() => {
 			});
 	});
 	fitAddon.fit();
-	((overlay, xscreen) => {
-		overlay.style.height = xscreen.style.height;
-	})(document.getElementById('overlay'), document.querySelector('.xterm-screen'));
-});
+	((overlays, xscreen) => {
+		overlays.forEach(overlay=>overlay.style.height = xscreen.style.height);
+	})(
+		['ttmendlgOverlay','loadOverlay'].map(s=>document.getElementById(s)),
+		document.querySelector('.xterm-screen'));
+	});
 function buyby(e) {
 	join(e.detail);
 	console.log(e.detail);
 }
+const init={
+	suite:"tcpip",
+	protocol:"ssh",
+	port:22,
+}
+let ttmendlgActive=false
 </script>
-<Ttmendlg on:hostdeal={buyby}></Ttmendlg>
 <main>
 	<input id="hash" bind:value={hashURI}>
 	<div id="wrapper">
-		<div id="overlay" class="overlay overlay-on"><div class="load-container"><div class="load"><div class="loader">Loading...</div></div></div></div>
+		<div id="ttmendlgOverlay" class={ttmendlgActive ? "overlay overlay-on" : "overlay"}>
+			<div class="overlay-container">
+			<Ttmendlg on:hostdeal={buyby}
+			bind:active={ttmendlgActive}
+			bind:suite={init.suite}
+			bind:protocol={init.protocol}
+			bind:port={init.port}
+			></Ttmendlg>
+			</div>
+		</div>
+		<div id="loadOverlay" class="overlay overlay-on">
+			<div class="overlay-container"><div class="load"><div class="loader">Loading...</div></div></div>
+		</div>
 		<div id="terminal"></div>
 	</div>
 </main>
@@ -144,10 +164,11 @@ function buyby(e) {
 	opacity: 0.8;
 	display:block;
 }
-.load-container {
+.overlay-container {
     width: 100%;
     height: 100%;
 	position:absolute;
+	overflow:scroll
 }
 
 #wrapper {

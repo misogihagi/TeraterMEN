@@ -66,10 +66,11 @@
   import { createEventDispatcher } from 'svelte';
   import {hostURI} from './store'
 
-	const dispatch = createEventDispatcher();
-let suite = 'tcpip';
-let protocol = 'ssh';
-let hostname = '';
+const dispatch = createEventDispatcher();
+export let active=false;
+export let suite = '';
+export let protocol = '';
+export let hostname = '';
 function tcpipChange(e){
   console.log(protocol,hostname,port,username,password,privateKey)
   hostURI.set(protocol +'://'+username+'@'+hostname+':'+port)
@@ -77,10 +78,10 @@ function tcpipChange(e){
 function hostchange(e) { // svelteのバグでバインドされないため
 		hostname = e.target.value;
 }
-let port = 22;
-let username = '';
-let password = '';
-let privateKey = '';
+export let port = 22;
+export let username = '';
+export let password = '';
+export let privateKey = '';
 
 function file2text(e) {
 		if (!e.target.files[0]) return;
@@ -102,6 +103,7 @@ function hostdealer() {
 			password,
 			privateKey,
 		});
+    active=false
 }
 const store = { hosts: ['127.0.0.1', '192.168.0.1', '172.16.0.1', '10.1.1.1'] };
 //    const store=localStorage.getItem('store') ? JSON.parse(localStorage.getItem('store')) : {};
