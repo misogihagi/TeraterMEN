@@ -41,13 +41,13 @@ const [env,platform]=process.argv.slice(3).reduce(
 gulp.task("install", 
     gulp.parallel(
         (done) => {
-            exec('cd client && npm install' , function (err, stdout, stderr) {
+            exec('npm install --prefix ./client' , function (err, stdout, stderr) {
               if(err)console.log(err);
               done()
             })
          },
         (done) => {
-            exec('cd server && npm install' , function (err, stdout, stderr) {
+            exec('npm install --prefix ./server' , function (err, stdout, stderr) {
               if(err)console.log(err);
               done()
             })
