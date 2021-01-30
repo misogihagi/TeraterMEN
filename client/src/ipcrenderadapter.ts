@@ -1,6 +1,10 @@
-import {
-	ipcRenderer 
-  } from 'electron'
+declare global {
+	interface Window {
+		require: any;
+	}
+}
+
+const { ipcRenderer } = window.require('electron');
 export let id;
 ipcRenderer.invoke('connect').then((result) => {
 	id = result;
