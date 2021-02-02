@@ -1,8 +1,12 @@
 import * as t from 'teratermen'
+import URI from 'urijs';
+
 const { BrowserWindow, app } = require('electron')
 const serve = require('electron-serve')
 const path = require('path')
 const loadURL = serve({ directory: path.join(__dirname, '../../client/public/') })
+const minimist = require('minimist');
+const args = minimist(process.argv.slice(1));
 let mainWindow
 
 const CreateWindow = async () => {
@@ -41,7 +45,14 @@ const Telnet = require('./lib/telnet.js').Telnet
 const store = {}
 const { ipcMain } = require('electron')
 ipcMain.on('connect', (event, msg) => {
-  event.sender.send('connect', 'connect')
+  const hostConfig = URI.parse(args._[0])
+  event.sender.send('connect', JSON.stringify({
+    protocol:hostConfig.protocol,
+    username:hostConfig.username,
+    password:hostConfig.password,
+    hostname:hostConfig.hostname,
+    port:hostConfig.port
+  }))
 })
 ipcMain.handle('connect', async (event, someArgument) => {
   return Date.now()

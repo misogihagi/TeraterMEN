@@ -24,6 +24,11 @@ fileref.setAttribute('href', cssfile);
 document.getElementsByTagName('head')[0].appendChild(fileref);
 
 hostURI.set(document.location.hash.slice(1))
+const init={
+	suite:"tcpip",
+	protocol:"ssh",
+	port:22,
+}
 
 let hostConfig = URI(document.location.hash.slice(1))._parts;
 const term = new Terminal();
@@ -39,9 +44,14 @@ const join = (config) => {
 const store = localStorage.getItem('store') ? JSON.parse(localStorage.getItem('store')) : {};
 let session = '';
 let hashURI=''
-adapter.once('connect', () => {
+adapter.once('connect', initConfigStr => {
 	document.getElementById('loadOverlay').classList.remove('overlay-on');
 	ttmendlgActive=true
+	const initConfig=JSON.parse(initConfigStr)
+	for (let prpty in initConfig){
+		init[prpty]=initConfig[prpty] || ''
+	}
+	init.suite = initConfig.protocol==="serial" ? "serial" : "tcpip"
 	Object.keys(store).forEach((key) => {
 		if (store[key] === document.location.hash.slice(1)) {
 			session = key;
@@ -126,11 +136,6 @@ function buyby(e) {
 	join(e.detail);
 	console.log(e.detail);
 }
-const init={
-	suite:"tcpip",
-	protocol:"ssh",
-	port:22,
-}
 let ttmendlgActive=false
 </script>
 <main>
@@ -142,6 +147,9 @@ let ttmendlgActive=false
 			bind:active={ttmendlgActive}
 			bind:suite={init.suite}
 			bind:protocol={init.protocol}
+			bind:username={init.username}
+			bind:password={init.password}
+			bind:hostname={init.hostname}
 			bind:port={init.port}
 			></Ttmendlg>
 			</div>

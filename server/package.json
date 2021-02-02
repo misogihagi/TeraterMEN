@@ -42,10 +42,12 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "minimist": "^1.2.5",
     "mocha": "^8.1.2",
     "nyc": "^15.1.0",
     "prettier": "^2.0.5",
     "ts-mocha": "^8.0.0",
+    "urijs": "^1.19.5",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
     "webpack-node-externals": "^2.5.2"
