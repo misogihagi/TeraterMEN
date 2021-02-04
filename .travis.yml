@@ -23,6 +23,3 @@ deploy:
     file:
         - "teratermen-1.0.1-win.zip"
     skip_cleanup: true
-    on:
-        tags: true
-        repo: "${TRAVIS_REPO_SLUG}"
