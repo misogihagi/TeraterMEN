@@ -141,7 +141,7 @@ gulp.task('build:electron', gulp.series(
   }, (done) => {
     fs.copyFileSync('./.env.bak', './.env')
     fs.unlinkSync('./.env.bak')
-    console.log(fs.readdirSync('./dist'))
+    console.log(fs.readdirSync('.'))
     done()
   }));
 gulp.task('lint', gulp.parallel('lint:client', 'lint:server'));
