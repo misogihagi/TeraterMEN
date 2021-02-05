@@ -137,6 +137,8 @@ gulp.task('build:electron', gulp.series(
         },
       }
     })
+    done()
+  }, (done) => {
     fs.copyFileSync('./.env.bak', './.env')
     fs.unlinkSync('./.env.bak')
     console.log(fs.readdirSync('./dist'))
