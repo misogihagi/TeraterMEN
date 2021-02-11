@@ -15,7 +15,12 @@ const webpackConfig = require("./server/webpack.config");
 const electronBuilder = require('electron-builder');
 const fs = require('fs')
 const version = require('package.json').version
+const { Octokit } = require("@octokit/rest");
 
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN,
+})
+  
 require('dotenv').config()
 Array.from(['env', 'platform']).forEach((v, i) => {
   process.env[i] = process.env[v]
@@ -133,6 +138,12 @@ gulp.task('build:electron', gulp.series(
             'target': 'zip',
             'arch': ['x64', 'ia32', ]
           }
+         },
+        'linux':{
+          'target':'zip'
+         },
+        'mac':{
+          'target':'zip'
         },
         "extraMetadata": {
           "main": "./server/dist/electron.webpack.js"
@@ -168,7 +179,7 @@ gulp.task('release', gulp.series(
           name: `teratermen-${version}-win.zip`,
       })
     }).then(
-      ()~>done()
+      ()=>done()
     )
   }
 )
