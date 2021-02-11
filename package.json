@@ -4,11 +4,12 @@
   "description": "",
   "main": "./server/dist/express.js",
   "scripts": {
+    "install": "gulp install",
     "lint": "eslint --init",
     "build": "gulp build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "gulp test",
     "electron": "electron ./server/dist/electron.js",
-    "pack": "electron-packager ./",
+    "pack": "gulp pack",
     "start": "gulp start",
     "watch": "gulp watch"
   },
@@ -32,13 +33,16 @@
     "gulp": "^4.0.2",
     "gulp-eslint": "^6.0.0",
     "gulp-if": "^3.0.0",
+    "gulp-ts-mocha": "git+https://github.com/misogihagi/gulp-ts-mocha.git",
     "gulp-run": "^1.7.1",
     "gulp-typescript": "^6.0.0-alpha.1",
     "prettier": "^2.0.5",
     "ssh-keygen": "git+https://github.com/misogihagi/ssh-keygen.git",
     "ssh2": "^0.8.9",
     "svelte": "^3.24.1",
-    "typescript": "^3.9.7"
+    "telnet": "git+https://github.com/TooTallNate/node-telnet.git#780340617e1f223de384cdfcb7cecf0a1a6f1159",
+    "typescript": "^3.9.7",
+    "webpack-stream": "^6.1.1"
   },
   "dependencies": {
     "dotenv": "^8.2.0"

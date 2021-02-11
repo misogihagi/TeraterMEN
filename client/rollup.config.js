@@ -14,7 +14,7 @@ config({ path: '../.env' })
 let moduleadapter
 if(process.env.platform === 'express'){
 	moduleadapter='./socketioadapter'
-}else if(process.env.platform === './socketioadapter' ){
+}else if(process.env.platform === 'electron' ){
 	moduleadapter='./ipcrenderadapter'
 }
 
@@ -40,7 +40,12 @@ function serve() {
 		}
 	};
 }
-	
+function electronPlugins(){
+	return process.env.platform === 'electron' ? 
+	[nodePolyfills()] :
+	[]
+}
+		
 export default {
 	input: 'src/main.ts',
 	output: {
@@ -50,7 +55,7 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
-//		nodePolyfills(),
+		...electronPlugins(),
 		css({ output: "public/build/extra.css" }),
 		replace({
 			moduleadapter: moduleadapter,
@@ -61,7 +66,7 @@ export default {
 			// we'll extract any component CSS out into
 			// a separate file - better for performance
 			css: css => {
-				css.write('public/build/bundle.css');
+				css.write('bundle.css');
 			},
 			preprocess: sveltePreprocess(),
 		}),

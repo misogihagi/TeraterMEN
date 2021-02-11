@@ -1,4 +1,4 @@
-require('./ssh').then(stream => {
+function game2048 (stream) {
   const readline = require('readline');
   const interface = {
     input: stream,
@@ -33,4 +33,8 @@ require('./ssh').then(stream => {
     rl.close()
   })
   game.start();
-})
+}
+
+
+require('./ssh').then(game2048)
+require('./telnet').then(game2048)

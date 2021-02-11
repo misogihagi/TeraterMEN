@@ -1,13 +1,23 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
-    "paths": {
-      "teratermen": ["../index.d.ts"],
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "teratermen": [
+                "../index.d.ts"
+            ]
+        },
+        "lib": [
+            "ESNEXT",
+            "dom"
+        ]
     },
-    "lib": ["ESNEXT","dom"],
-  },
-  "extends": "@tsconfig/svelte/tsconfig.json",
-
-  "include": ["src/**/*"],
-  "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules/*",
+        "__sapper__/*",
+        "public/*"
+    ]
 }

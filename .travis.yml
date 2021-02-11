@@ -1,0 +1,25 @@
+language: node_js
+os:
+- linux
+- osx
+- windows
+node_js: 14.15.4
+branches:
+  only:
+  - master
+  - main
+  except:
+  - dev
+before_script:
+- npm i
+script:
+- npm run test
+before_deploy:
+- npm run pack
+deploy:
+  provider: releases
+  api_key:
+    secure: vd2z1QITxNCta5d3iZfnzvG9iQdZTQcqRSPvps2BTzsGBRs+rjInhsJmy23zDHU60CRVYfvaNHGRTGJhOhG18m22H4Hx4GFU/duoZTJDpy7/rWfJKFDrUkTQcTAyk+dmXOkaZyLdoa1Z7Ia6HJniOXMTFi1nGOIQxVhW+N5B1WVvHHwe5NG2bA77IP760c0sUmvs0rLvtc9LB+2b8rY4dvwtJ+FWVqf78UU9M2omkIhrn5GazUFf9i0qFxatsOO11CQ/5M4AM8Qm1ajZHzwv15dU0Rr37rfJEeO285AtzcErZKitXSxqCtMrRgNuP4JZAT8dB/53qWYFBT7eUqwoY/HLSgU7DBOYpQL20qwQ9pg9shL6Yb5QfnlUzvyTfwe9BjwQh+ddD0dWR5p8juX4nBShj9820yfUxplwBqHE5hrKKxQZvY4fG57wplcM2BVXrNGnauhsLHi8JbrXXVVGcMlJrF9g0u0CH/97C8Dd9wG0hGewvlklJNUzEXDzcvgKzdDtM2oH7SaoPXW5KpDNbQ1pGcxbwX69D5XudKlToh5f/uKEox63xtHsjT06BCJ62TtoiMEzdjSDugu+jVMCPQ09AckaPiyLPJeG5KE+0RvOQcYzkpcbTXQtxK2knEnbvkP92Nf1GbMP+2Bi5rBZaUI7QcaeQofQHF/IEfVurTY=
+  file:
+  - teratermen-1.0.1-win.zip
+  skip_cleanup: true
