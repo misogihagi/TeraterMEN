@@ -14,6 +14,8 @@ const webpack = require("webpack");
 const webpackConfig = require("./server/webpack.config");
 const electronBuilder = require('electron-builder');
 const fs = require('fs')
+const version = require('package.json').version
+
 require('dotenv').config()
 Array.from(['env', 'platform']).forEach((v, i) => {
   process.env[i] = process.env[v]
@@ -148,6 +150,28 @@ gulp.task('lint', gulp.parallel('lint:client', 'lint:server'));
 gulp.task('pack', gulp.parallel('build:electron'));
 gulp.task('test', gulp.series('build', 'test:client', 'test:server'));
 gulp.task('watch', gulp.parallel('watch:client', 'watch:server'));
+gulp.task('release', gulp.series(
+  'pack',
+  (done) => {
+    octokit.repos.createRelease({
+      owner: "misogihagi",
+      repo: "Teratermen",
+      tag_name: versiom
+    }).then(result=>{
+      return octokit.request({
+          method: "POST",
+          url: result.upload_url,
+          headers: {
+            "content-type": "application/zip",
+          },
+          data: fs.readFileSync(`teratermen-${version}-win.zip`),
+          name: `teratermen-${version}-win.zip`,
+      })
+    }).then(
+      ()~>done()
+    )
+  }
+)
 gulp.task('start', gulp.series('build', (done) => {
   const port = process.env.PORT || 3000;
   console.log('listening on http://localhost:' + port);
