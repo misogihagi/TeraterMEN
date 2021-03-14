@@ -1,6 +1,6 @@
 import * as t from 'teratermen'
-import URI from 'urijs';
 
+const URI = require('urijs');
 const { BrowserWindow, app } = require('electron')
 const serve = require('electron-serve')
 const path = require('path')

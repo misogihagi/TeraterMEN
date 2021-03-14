@@ -14,7 +14,7 @@ const webpack = require("webpack");
 const webpackConfig = require("./server/webpack.config");
 const electronBuilder = require('electron-builder');
 const fs = require('fs')
-const version = require('package.json').version
+const version = require('./package.json').version
 const { Octokit } = require("@octokit/rest");
 
 const octokit = new Octokit({
@@ -182,7 +182,7 @@ gulp.task('release', gulp.series(
       ()=>done()
     )
   }
-)
+))
 gulp.task('start', gulp.series('build', (done) => {
   const port = process.env.PORT || 3000;
   console.log('listening on http://localhost:' + port);
