@@ -10,6 +10,7 @@
     "test": "gulp test",
     "electron": "electron ./server/dist/electron.js",
     "pack": "gulp pack",
+    "serve": "gulp serve",
     "start": "gulp start",
     "watch": "gulp watch"
   },
