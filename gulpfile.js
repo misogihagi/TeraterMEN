@@ -2,7 +2,8 @@ const gulp = require("gulp");
 const gulpIf = require('gulp-if');
 const run = require('gulp-run');
 const {
-  exec
+  exec,
+  spawn
 } = require('child_process');
 const ts = require("gulp-typescript");
 const clientTsProject = ts.createProject('./client/tsconfig.json');
@@ -186,6 +187,14 @@ gulp.task('release', gulp.series(
 gulp.task('start', gulp.series('build', (done) => {
   const port = process.env.PORT || 3000;
   console.log('listening on http://localhost:' + port);
-  return run('node server/dist/express').exec();
+  const childProcess = spawn('node', ['server/dist/express'])
+
+  childProcess.stdout.on('data', (chunk) => {
+    console.log(chunk.toString())
+  })
+  childProcess.stderr.on('data', (chunk) => {
+    console.error(chunk.toString())
+  })
+  return childProcess
 }));
 //gulp.task("default", gulp.task("start"));
