@@ -3,7 +3,8 @@ const gulpIf = require('gulp-if');
 const run = require('gulp-run');
 const {
   exec,
-  spawn
+  spawn,
+  fork
 } = require('child_process');
 const ts = require("gulp-typescript");
 const clientTsProject = ts.createProject('./client/tsconfig.json');
@@ -215,5 +216,19 @@ gulp.task('serve', gulp.series(
     }
     : 'start'
 ));
+
+gulp.task('dev',gulp.parallel(
+  'watch:client',
+  ()=> {
+    let childExpress=fork('server/dist/express')
+    const watcher = gulp.watch('server/src/*.*');
+    watcher.on('change', function (event) {
+      console.log('File ' + event + ' was changed...');
+      childExpress.kill('SIGINT')
+      childExpress=fork('server/dist/express')
+    });
+  }
+))
+
 
 //gulp.task("default", gulp.task("start"));
