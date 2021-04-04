@@ -185,6 +185,20 @@ gulp.task('release', gulp.series(
   }
 ))
 
+gulp.task('start', gulp.series('build', (done) => {
+  const port = process.env.PORT || 3000;
+  console.log('listening on http://localhost:' + port);
+  const childProcess = spawn('node', ['server/dist/express'])
+
+  childProcess.stdout.on('data', (chunk) => {
+    console.log(chunk.toString())
+  })
+  childProcess.stderr.on('data', (chunk) => {
+    console.error(chunk.toString())
+  })
+  return childProcess
+}));
+
 gulp.task('serve', gulp.series(
   fs.existsSync('server/dist/express.js')
     ? ()=>{
@@ -202,17 +216,4 @@ gulp.task('serve', gulp.series(
     : 'start'
 ));
 
-gulp.task('start', gulp.series('build', (done) => {
-  const port = process.env.PORT || 3000;
-  console.log('listening on http://localhost:' + port);
-  const childProcess = spawn('node', ['server/dist/express'])
-
-  childProcess.stdout.on('data', (chunk) => {
-    console.log(chunk.toString())
-  })
-  childProcess.stderr.on('data', (chunk) => {
-    console.error(chunk.toString())
-  })
-  return childProcess
-}));
 //gulp.task("default", gulp.task("start"));
