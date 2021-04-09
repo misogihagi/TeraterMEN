@@ -49,18 +49,21 @@ const [env, platform] = process.argv.slice(3).reduce(
 gulp.task("install", gulp.parallel(
   (done) => {
     exec('cd client && npm install', function (err, stdout, stderr) {
-      if (err) console.log(err);
+      if (err) console.error(stderr);
+      console.log(stdout)
       done()
     })
   }, (done) => {
     exec('cd server && npm install', function (err, stdout, stderr) {
-      if (err) console.log(err);
+      if (err) console.error(stderr);
+      console.log(stdout)
       done()
     })
   }));
 gulp.task("build:client", (done) => {
   exec('cd client && npm run build', function (err, stdout, stderr) {
-    if (err) console.log(err);
+    if (err) console.error(stderr);
+    console.log(stdout)
     done()
   });
 });
