@@ -209,10 +209,10 @@ gulp.task('serve', gulp.series(
       console.log('listening on http://localhost:' + port);
       const childProcess = fork('server/dist/express')
 
-      childProcess.stdout.on('data', (chunk) => {
+      childProcess.on('message', (chunk) => {
         console.log(chunk.toString())
       })
-      childProcess.stderr.on('data', (chunk) => {
+      childProcess.on('error', (chunk) => {
         console.error(chunk.toString())
       })
     }
