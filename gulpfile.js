@@ -3,7 +3,6 @@ const gulpIf = require('gulp-if');
 const run = require('gulp-run');
 const {
   exec,
-  spawn,
   fork
 } = require('child_process');
 const ts = require("gulp-typescript");
@@ -192,12 +191,12 @@ gulp.task('release', gulp.series(
 gulp.task('start', gulp.series('build', (done) => {
   const port = process.env.PORT || 3000;
   console.log('listening on http://localhost:' + port);
-  const childProcess = spawn('node', ['server/dist/express'])
+  const childProcess = fork('server/dist/express')
 
-  childProcess.stdout.on('data', (chunk) => {
+  childProcess.on('message', (chunk) => {
     console.log(chunk.toString())
   })
-  childProcess.stderr.on('data', (chunk) => {
+  childProcess.on('error', (chunk) => {
     console.error(chunk.toString())
   })
   return childProcess
@@ -208,7 +207,7 @@ gulp.task('serve', gulp.series(
     ? ()=>{
       const port = process.env.PORT || 3000;
       console.log('listening on http://localhost:' + port);
-      const childProcess = spawn('node', ['server/dist/express'])
+      const childProcess = fork('server/dist/express')
 
       childProcess.stdout.on('data', (chunk) => {
         console.log(chunk.toString())
