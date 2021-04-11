@@ -46,7 +46,7 @@ let session = '';
 let hashURI=''
 adapter.once('connect', initConfigStr => {
 	document.getElementById('loadOverlay').classList.remove('overlay-on');
-	if(initConfigStr !== ""){
+	if(typeof initConfigStr === "string"){
 		const initConfig=JSON.parse(initConfigStr)
 		ttmendlgActive=true
 		for (let prpty in initConfig){
