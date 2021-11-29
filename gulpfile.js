@@ -2,7 +2,8 @@ const gulp = require("gulp");
 const gulpIf = require('gulp-if');
 const run = require('gulp-run');
 const {
-  exec
+  exec,
+  fork
 } = require('child_process');
 const ts = require("gulp-typescript");
 const clientTsProject = ts.createProject('./client/tsconfig.json');
@@ -47,18 +48,21 @@ const [env, platform] = process.argv.slice(3).reduce(
 gulp.task("install", gulp.parallel(
   (done) => {
     exec('cd client && npm install', function (err, stdout, stderr) {
-      if (err) console.log(err);
+      if (err) console.error(stderr);
+      console.log(stdout)
       done()
     })
   }, (done) => {
     exec('cd server && npm install', function (err, stdout, stderr) {
-      if (err) console.log(err);
+      if (err) console.error(stderr);
+      console.log(stdout)
       done()
     })
   }));
 gulp.task("build:client", (done) => {
   exec('cd client && npm run build', function (err, stdout, stderr) {
-    if (err) console.log(err);
+    if (err) console.error(stderr);
+    console.log(stdout)
     done()
   });
 });
@@ -183,9 +187,50 @@ gulp.task('release', gulp.series(
     )
   }
 ))
+
 gulp.task('start', gulp.series('build', (done) => {
   const port = process.env.PORT || 3000;
   console.log('listening on http://localhost:' + port);
-  return run('node server/dist/express').exec();
+  const childProcess = fork('server/dist/express')
+
+  childProcess.on('message', (chunk) => {
+    console.log(chunk.toString())
+  })
+  childProcess.on('error', (chunk) => {
+    console.error(chunk.toString())
+  })
+  return childProcess
 }));
+
+gulp.task('serve', gulp.series(
+  fs.existsSync('server/dist/express.js')
+    ? ()=>{
+      const port = process.env.PORT || 3000;
+      console.log('listening on http://localhost:' + port);
+      const childProcess = fork('server/dist/express')
+
+      childProcess.on('message', (chunk) => {
+        console.log(chunk.toString())
+      })
+      childProcess.on('error', (chunk) => {
+        console.error(chunk.toString())
+      })
+    }
+    : 'start'
+));
+
+gulp.task('dev',gulp.parallel(
+  'watch:client',
+  ()=> {
+    let childExpress=fork('server/dist/express')
+    const watcher = gulp.watch('server/src/*.*');
+    watcher.on('change', function (event) {
+      console.log('File ' + event + ' was changed...');
+      childExpress.kill('SIGINT')
+      childExpress=fork('server/dist/express')
+    });
+  }
+))
+
+
 //gulp.task("default", gulp.task("start"));

@@ -46,12 +46,14 @@ let session = '';
 let hashURI=''
 adapter.once('connect', initConfigStr => {
 	document.getElementById('loadOverlay').classList.remove('overlay-on');
-	ttmendlgActive=true
-	const initConfig=JSON.parse(initConfigStr)
-	for (let prpty in initConfig){
-		init[prpty]=initConfig[prpty] || ''
+	if(typeof initConfigStr === "string"){
+		const initConfig=JSON.parse(initConfigStr)
+		ttmendlgActive=true
+		for (let prpty in initConfig){
+			init[prpty]=initConfig[prpty] || ''
+		}
+		init.suite = initConfig.protocol==="serial" ? "serial" : "tcpip"
 	}
-	init.suite = initConfig.protocol==="serial" ? "serial" : "tcpip"
 	Object.keys(store).forEach((key) => {
 		if (store[key] === document.location.hash.slice(1)) {
 			session = key;

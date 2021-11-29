@@ -11,6 +11,7 @@ const Telnet = require('./lib/telnet.js').Telnet
 const store = {}
 const io = require('socket.io')(http)
 io.on('connection', function (socket) {
+  console.log(`connected from ${socket.handshake.address}, id:${socket.id} query: ${JSON.stringify(socket.handshake.query)}`)
   socket.on('join', function (msg:t.JOINMSG) {
     const config = msg.config
     if (msg.id in store) {

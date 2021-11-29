@@ -1,7 +1,7 @@
 import SocketIO from 'socket.io-client';
 
 //const socket = SocketIO();
-const socket = SocketIO("http://localhost:3000");
+const socket = SocketIO();
 socket.binaryType = 'arraybuffer';
 
 export function on(type, listener) {

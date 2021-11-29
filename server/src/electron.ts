@@ -45,6 +45,7 @@ const Telnet = require('./lib/telnet.js').Telnet
 const store = {}
 const { ipcMain } = require('electron')
 ipcMain.on('connect', (event, msg) => {
+  if (args._.length === 0) return
   const hostConfig = URI.parse(args._[0])
   event.sender.send('connect', JSON.stringify({
     protocol:hostConfig.protocol,
